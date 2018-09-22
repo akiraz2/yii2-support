@@ -3,9 +3,13 @@
 /* @var $model \powerkernel\support\models\Content */
 ?>
 
-<?= Yii::$app->getModule('support')->t('Ticket #{ID}: New reply from {NAME}:', ['ID'=>$model->ticket->id, 'NAME'=>!empty($model->created_by)?$model->createdBy->fullname:Yii::$app->getModule('support')->t('Ticket System')]) ?>
+<?= \powerkernel\support\Module::t('support', 'Ticket #{ID}: New reply from {NAME}:', [
+    'ID' => $model->ticket->id,
+    'NAME' => !empty($model->created_by) ? $model->createdBy->fullname : \powerkernel\support\Module::t('support',
+        'Ticket System')
+]) ?>
 
 <?= Yii::$app->formatter->asNtext($model->content) ?>
 
 
-<?= Yii::$app->getModule('support')->t('View Ticket: {URL}', ['URL'=>$model->ticket->getUrl(true)]) ?>
+<?= \powerkernel\support\Module::t('support', 'View Ticket: {URL}', ['URL' => $model->ticket->getUrl(true)]) ?>

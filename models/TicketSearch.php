@@ -19,7 +19,7 @@ use yii\data\ActiveDataProvider;
  */
 class TicketSearch extends Ticket
 {
-    public $userSearch=false;
+    public $userSearch = false;
 
     /**
      * @inheritdoc
@@ -55,14 +55,14 @@ class TicketSearch extends Ticket
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort'=> ['defaultOrder' => ['created_at'=>SORT_DESC]],
+            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]],
             //'pagination'=>['pageSize'=>20],
         ]);
 
         $this->load($params);
 
-        if($this->userSearch){
-            $query->andFilterWhere(['created_by'=>Yii::$app->user->id]);
+        if ($this->userSearch) {
+            $query->andFilterWhere(['created_by' => Yii::$app->user->id]);
         }
 
         if (!$this->validate()) {
@@ -83,40 +83,37 @@ class TicketSearch extends Ticket
 
         $query->andFilterWhere(['like', 'title', $this->title]);
 
-        if(!empty($this->created_by)) {
-            if(Yii::$app->params['mongodb']['account']){
-                $key='_id';
-            }
-            else {
-                $key='id';
+        if (!empty($this->created_by)) {
+            if (Yii::$app->params['mongodb']['account']) {
+                $key = '_id';
+            } else {
+                $key = 'id';
             }
             $ids = [];
-            $owners=Account::find()->select([$key])->where(['like', 'fullname', $this->created_by])->asArray()->all();
+            $owners = Account::find()->select([$key])->where(['like', 'fullname', $this->created_by])->asArray()->all();
             foreach ($owners as $owner) {
-                if(Yii::$app->params['mongodb']['account']){
+                if (Yii::$app->params['mongodb']['account']) {
                     $ids[] = (string)$owner[$key];
-                }
-                else {
+                } else {
                     $ids[] = (int)$owner[$key];
                 }
             }
-            $query->andFilterWhere(['created_by' => empty($ids)?'0':$ids]);
+            $query->andFilterWhere(['created_by' => empty($ids) ? '0' : $ids]);
         }
 
-        if(!empty($this->created_at)){
+        if (!empty($this->created_at)) {
             if (is_a($this, '\yii\mongodb\ActiveRecord')) {
                 $query->andFilterWhere([
-                    'created_at' => ['$gte'=>new UTCDateTime(strtotime($this->created_at)*1000)],
+                    'created_at' => ['$gte' => new UTCDateTime(strtotime($this->created_at) * 1000)],
                 ])->andFilterWhere([
-                    'created_at' => ['$lt'=>new UTCDateTime((strtotime($this->created_at)+86400)*1000)],
+                    'created_at' => ['$lt' => new UTCDateTime((strtotime($this->created_at) + 86400) * 1000)],
                 ]);
-            }
-            else {
+            } else {
                 $query->andFilterWhere([
                     'DATE(CONVERT_TZ(FROM_UNIXTIME(`created_at`), :UTC, :ATZ))' => $this->created_at,
                 ])->params([
-                    ':UTC'=>'+00:00',
-                    ':ATZ'=>date('P')
+                    ':UTC' => '+00:00',
+                    ':ATZ' => date('P')
                 ]);
             }
 

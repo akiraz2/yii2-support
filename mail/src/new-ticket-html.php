@@ -1,6 +1,7 @@
 <?php
 
 /* @var $this yii\web\View */
+
 use yii\helpers\Html;
 
 /* @var $model \powerkernel\support\models\Ticket */
@@ -9,9 +10,11 @@ use yii\helpers\Html;
 <div itemscope itemtype="http://schema.org/EmailMessage">
     <div itemprop="potentialAction" itemscope itemtype="http://schema.org/ViewAction">
         <link itemprop="target" href="<?= $model->getUrl(true) ?>"/>
-        <meta itemprop="name" content="<?= Yii::$app->getModule('support')->t('View Ticket') ?>"/>
+        <meta itemprop="name" content="<?= \powerkernel\support\Module::t('support', 'View Ticket') ?>"/>
     </div>
-    <meta itemprop="description" content="<?= Yii::$app->getModule('support')->t('You\'ve received a ticket (#{ID}) from {APP}', ['ID'=>$model->id, 'APP'=>Yii::$app->name]) ?>"/>
+    <meta itemprop="description"
+          content="<?= \powerkernel\support\Module::t('support', 'You\'ve received a ticket (#{ID}) from {APP}',
+              ['ID' => $model->id, 'APP' => Yii::$app->name]) ?>"/>
 </div>
 
 <table class="body-wrap">
@@ -26,31 +29,40 @@ use yii\helpers\Html;
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr>
                                     <td class="content-block">
-                                        <?= Yii::$app->getModule('support')->t('Greetings from {APP},', ['APP'=>Yii::$app->name]) ?>
+                                        <?= \powerkernel\support\Module::t('support', 'Greetings from {APP},',
+                                            ['APP' => Yii::$app->name]) ?>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="content-block">
-                                        <?= Yii::$app->getModule('support')->t('{USER} ({EMAIL}) have opened a ticket with the following message:', [
-                                            'USER' => Html::encode($model->createdBy->fullname),
-                                            'EMAIL' => Html::encode($model->createdBy->email)]) ?>
+                                        <?= \powerkernel\support\Module::t('support',
+                                            '{USER} ({EMAIL}) have opened a ticket with the following message:',
+                                            [
+                                                'USER' => Html::encode($model->createdBy->fullname),
+                                                'EMAIL' => Html::encode($model->createdBy->email)
+                                            ]) ?>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td class="content-block">
-                                        <?= Yii::$app->getModule('support')->t('Ticket #{ID}', ['ID'=>$model->id]) ?><br>
-                                        <?= Yii::$app->getModule('support')->t('Subject: {TITLE}', ['TITLE'=>$model->title]) ?><br>
+                                        <?= \powerkernel\support\Module::t('support', 'Ticket #{ID}',
+                                            ['ID' => $model->id]) ?>
+                                        <br>
+                                        <?= \powerkernel\support\Module::t('support', 'Subject: {TITLE}',
+                                            ['TITLE' => $model->title]) ?>
+                                        <br>
                                         <?= Yii::$app->formatter->asNtext($model->content) ?>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td class="content-block aligncenter" colspan="2">
-                                        <a href="<?= $model->getUrl(true) ?>" class="btn-primary"><?= Yii::$app->getModule('support')->t('View Ticket') ?></a>
+                                        <a href="<?= $model->getUrl(true) ?>"
+                                           class="btn-primary"><?= \powerkernel\support\Module::t('support',
+                                                'View Ticket') ?></a>
                                     </td>
                                 </tr>
-
 
 
                             </table>
@@ -64,4 +76,4 @@ use yii\helpers\Html;
         <td></td>
     </tr>
 </table>
-<link href="src/css/mailgun.css" media="all" rel="stylesheet" type="text/css" />
+<link href="src/css/mailgun.css" media="all" rel="stylesheet" type="text/css"/>

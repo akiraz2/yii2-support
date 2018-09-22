@@ -1,5 +1,5 @@
 <?php
-$this->title='Ticket System';
+$this->title = 'Ticket System';
 ?>
 <div class="ticket-default-index">
     <h1><?= $this->context->action->uniqueId ?></h1>

@@ -9,12 +9,12 @@
 namespace powerkernel\support\models;
 
 
+use common\behaviors\UTCDateTimeBehavior;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use common\behaviors\UTCDateTimeBehavior;
 
 
-if (Yii::$app->getModule('support')->params['db']==='mongodb') {
+if (Yii::$app->getModule('support')->params['db'] === 'mongodb') {
     /**
      * Class CatActiveRecord
      * @package common\models
@@ -76,7 +76,7 @@ if (Yii::$app->getModule('support')->params['db']==='mongodb') {
         public function getCreatedAt()
         {
             return $this->created_at->toDateTime()->format('U');
-        }        
+        }
     }
 } else {
     /**
@@ -117,7 +117,7 @@ if (Yii::$app->getModule('support')->params['db']==='mongodb') {
         public function getCreatedAt()
         {
             return $this->created_at;
-        }        
+        }
     }
 }
 
@@ -125,5 +125,6 @@ if (Yii::$app->getModule('support')->params['db']==='mongodb') {
  * Class CatBase
  * @package common\models
  */
-class CatBase extends CatActiveRecord {
+class CatBase extends CatActiveRecord
+{
 }

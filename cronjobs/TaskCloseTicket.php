@@ -15,15 +15,14 @@ $schedule->call(function (\yii\console\Application $app) {
     $period = 7 * 86400; // 7 days
     $point = time() - $period;
 
-    if(Yii::$app->getModule('support')->params['db']==='mongodb'){
+    if (Yii::$app->getModule('support')->params['db'] === 'mongodb') {
         $tickets = Ticket::find()
             ->where([
-                'status'=>Ticket::STATUS_WAITING,
-                'updated_at'=>['$lt'=>new \MongoDB\BSON\UTCDateTime($point*1000)]
+                'status' => Ticket::STATUS_WAITING,
+                'updated_at' => ['$lt' => new \MongoDB\BSON\UTCDateTime($point * 1000)]
             ])
             ->all();
-    }
-    else {
+    } else {
         $tickets = Ticket::find()
             ->where('status=:status AND updated_at<:point', [':point' => $point, ':status' => Ticket::STATUS_WAITING])
             ->all();
@@ -53,13 +52,12 @@ $schedule->call(function (\yii\console\Application $app) {
     /* delete old logs never bad */
     $period = 30 * 24 * 60 * 60; // 30 days
     $point = time() - $period;
-    if(Yii::$app->params['mongodb']['taskLog']){
+    if (Yii::$app->params['mongodb']['taskLog']) {
         \common\models\TaskLog::deleteAll([
-            'task'=>basename(__FILE__, '.php'),
-            'created_at'=>['$lte', new \MongoDB\BSON\UTCDateTime($point*1000)]
+            'task' => basename(__FILE__, '.php'),
+            'created_at' => ['$lte', new \MongoDB\BSON\UTCDateTime($point * 1000)]
         ]);
-    }
-    else {
+    } else {
         \common\models\TaskLog::deleteAll('task=:task AND created_at<=:point', [
             ':task' => basename(__FILE__, '.php'),
             ':point' => $point

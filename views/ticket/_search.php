@@ -35,8 +35,8 @@ use yii\widgets\ActiveForm;
     <?php // echo $form->field($model, 'updated_at') ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('support', 'Search'), ['class' => 'btn btn-primary']) ?>
-        <?= Html::resetButton(Yii::t('support', 'Reset'), ['class' => 'btn btn-default']) ?>
+        <?= Html::submitButton(\powerkernel\support\Module::t('support', 'Search'), ['class' => 'btn btn-primary']) ?>
+        <?= Html::resetButton(\powerkernel\support\Module::t('support', 'Reset'), ['class' => 'btn btn-default']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

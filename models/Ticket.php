@@ -36,25 +36,6 @@ class Ticket extends TicketBase
 
     public $content;
 
-
-    /**
-     * get status list
-     * @param null $e
-     * @return array
-     */
-    public static function getStatusOption($e = null)
-    {
-        $option = [
-            self::STATUS_OPEN => Yii::$app->getModule('support')->t('Open'),
-            self::STATUS_WAITING => Yii::$app->getModule('support')->t('Waiting'),
-            self::STATUS_CLOSED => Yii::$app->getModule('support')->t('Closed'),
-        ];
-        if (is_array($e))
-            foreach ($e as $i)
-                unset($option[$i]);
-        return $option;
-    }
-
     /**
      * get status text
      * @return string
@@ -66,7 +47,27 @@ class Ticket extends TicketBase
         if (!empty($status) && in_array($status, array_keys($list))) {
             return $list[$status];
         }
-        return Yii::$app->getModule('support')->t('Unknown');
+        return \powerkernel\support\Module::t('support', 'Unknown');
+    }
+
+    /**
+     * get status list
+     * @param null $e
+     * @return array
+     */
+    public static function getStatusOption($e = null)
+    {
+        $option = [
+            self::STATUS_OPEN => \powerkernel\support\Module::t('support', 'Open'),
+            self::STATUS_WAITING => \powerkernel\support\Module::t('support', 'Waiting'),
+            self::STATUS_CLOSED => \powerkernel\support\Module::t('support', 'Closed'),
+        ];
+        if (is_array($e)) {
+            foreach ($e as $i) {
+                unset($option[$i]);
+            }
+        }
+        return $option;
     }
 
     /**
@@ -92,7 +93,8 @@ class Ticket extends TicketBase
         if (!empty($status) && in_array($status, array_keys($list))) {
             return '<span class="label label-' . $color . '">' . $list[$status] . '</span>';
         }
-        return '<span class="label label-' . $color . '">' . Yii::$app->getModule('support')->t('Unknown') . '</span>';
+        return '<span class="label label-' . $color . '">' . \powerkernel\support\Module::t('support',
+                'Unknown') . '</span>';
     }
 
 
@@ -109,8 +111,20 @@ class Ticket extends TicketBase
 
             [['status'], 'string'],
 
-            [['cat'], 'exist', 'skipOnError' => true, 'targetClass' => Cat::className(), 'targetAttribute' => ['cat' => Yii::$app->getModule('support')->params['db'] === 'mongodb' ? '_id' : 'id']],
-            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => Account::className(), 'targetAttribute' => ['created_by' => Yii::$app->params['mongodb']['account'] ? '_id' : 'id']],
+            [
+                ['cat'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Cat::className(),
+                'targetAttribute' => ['cat' => Yii::$app->getModule('support')->params['db'] === 'mongodb' ? '_id' : 'id']
+            ],
+            [
+                ['created_by'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Account::className(),
+                'targetAttribute' => ['created_by' => Yii::$app->params['mongodb']['account'] ? '_id' : 'id']
+            ],
 
             /* custom */
             [['content'], 'required', 'on' => ['create']],
@@ -123,14 +137,14 @@ class Ticket extends TicketBase
     public function attributeLabels()
     {
         return [
-            'id' => Yii::$app->getModule('support')->t('ID'),
-            'cat' => Yii::$app->getModule('support')->t('Category'),
-            'title' => Yii::$app->getModule('support')->t('Title'),
-            'content' => Yii::$app->getModule('support')->t('Content'),
-            'status' => Yii::$app->getModule('support')->t('Status'),
-            'created_by' => Yii::$app->getModule('support')->t('Created By'),
-            'created_at' => Yii::$app->getModule('support')->t('Created At'),
-            'updated_at' => Yii::$app->getModule('support')->t('Updated At'),
+            'id' => \powerkernel\support\Module::t('support', 'ID'),
+            'cat' => \powerkernel\support\Module::t('support', 'Category'),
+            'title' => \powerkernel\support\Module::t('support', 'Title'),
+            'content' => \powerkernel\support\Module::t('support', 'Content'),
+            'status' => \powerkernel\support\Module::t('support', 'Status'),
+            'created_by' => \powerkernel\support\Module::t('support', 'Created By'),
+            'created_at' => \powerkernel\support\Module::t('support', 'Created At'),
+            'updated_at' => \powerkernel\support\Module::t('support', 'Updated At'),
         ];
     }
 
@@ -200,7 +214,7 @@ class Ticket extends TicketBase
             $ticketContent->created_by = Yii::$app->user->id;
             if ($ticketContent->save()) {
                 /* send email */
-                $subject = Yii::$app->getModule('support')->t('You\'ve received a ticket');
+                $subject = \powerkernel\support\Module::t('support', 'You\'ve received a ticket');
                 Yii::$app->mailer
                     ->compose(
                         [
@@ -240,7 +254,8 @@ class Ticket extends TicketBase
             $post = new Content();
             $post->id_ticket = $this->id;
             $post->created_by = null;
-            $post->content = Yii::$app->getModule('support')->t('Ticket was closed automatically due to inactivity.');
+            $post->content = \powerkernel\support\Module::t('support',
+                'Ticket was closed automatically due to inactivity.');
             if ($post->save()) {
                 $this->status = Ticket::STATUS_CLOSED;
                 $this->save();

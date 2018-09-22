@@ -9,9 +9,9 @@
 namespace powerkernel\support\models;
 
 
+use common\behaviors\UTCDateTimeBehavior;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use common\behaviors\UTCDateTimeBehavior;
 
 
 if (Yii::$app->getModule('support')->params['db'] === 'mongodb') {

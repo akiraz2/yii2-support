@@ -6,11 +6,12 @@ use yii\helpers\Html;
 /* @var $model \powerkernel\support\models\Ticket */
 ?>
 
-<?= Yii::$app->getModule('support')->t('Hello Admin,') ?>
+<?= \powerkernel\support\Module::t('support', 'Hello Admin,') ?>
 
-<?= Yii::$app->getModule('support')->t('{USER} ({EMAIL}) have opened a ticket with the following message:', [
-        'USER' => Html::encode($model->createdBy->fullname),
-        'EMAIL' => Html::encode($model->createdBy->email)]) ?>
+<?= \powerkernel\support\Module::t('support', '{USER} ({EMAIL}) have opened a ticket with the following message:', [
+    'USER' => Html::encode($model->createdBy->fullname),
+    'EMAIL' => Html::encode($model->createdBy->email)
+]) ?>
 
 
 <?= $model->title ?>
@@ -19,4 +20,4 @@ use yii\helpers\Html;
 
 
 
-<?= Yii::$app->getModule('support')->t('View Ticket: {URL}', ['URL'=>$model->getUrl(true)]) ?>
+<?= \powerkernel\support\Module::t('support', 'View Ticket: {URL}', ['URL' => $model->getUrl(true)]) ?>

@@ -15,7 +15,7 @@ use yii\widgets\ActiveForm;
 /* @var $model powerkernel\support\models\Ticket */
 /* @var $reply powerkernel\support\models\Content */
 
-$this->params['breadcrumbs'][] = ['label' => Yii::t('support', 'Tickets'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => \powerkernel\support\Module::t('support', 'Tickets'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 /* misc */
@@ -32,7 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
             </h1>
 
             <div class="pull-right">
-                <?= Yii::$app->getModule('support')->t('Status: {STATUS}', ['STATUS' => $model->getStatusColorText()]) ?>
+                <?= \powerkernel\support\Module::t('support', 'Status: {STATUS}',
+                    ['STATUS' => $model->getStatusColorText()]) ?>
             </div>
 
         </div>
@@ -48,7 +49,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <div class="timeline-item">
                             <span class="time"><?= Icon::widget(['icon' => 'clock-o']) ?> <?= Yii::$app->formatter->asDatetime($post->createdAt) ?></span>
-                            <h3 class="timeline-header"><?= !empty($post->created_by) ? $post->createdBy->fullname : Yii::$app->getModule('support')->t('Ticket System') ?></h3>
+                            <h3 class="timeline-header"><?= !empty($post->created_by) ? $post->createdBy->fullname : \powerkernel\support\Module::t('support',
+                                    'Ticket System') ?></h3>
                             <div class="timeline-body">
                                 <?= Yii::$app->formatter->asNtext($post->content) ?>
                             </div>
@@ -65,10 +67,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php $form = ActiveForm::begin(); ?>
                 <?= $form->field($reply, 'content')->textarea(['rows' => 8])->label(false) ?>
                 <div class="form-group">
-                    <?= \common\components\SubmitButton::widget(['text'=>Yii::t('support', 'Reply'), 'options'=>['class' => 'btn btn-primary']]) ?>
-                    <?php if($model->status!=Ticket::STATUS_CLOSED):?>
-                    <?= Html::a(Yii::t('support', 'Close'), ['close', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->_id:$model->id], ['class' => 'btn btn-warning']) ?>
-                    <?php endif;?>
+                    <?= \common\components\SubmitButton::widget([
+                        'text' => \powerkernel\support\Module::t('support', 'Reply'),
+                        'options' => ['class' => 'btn btn-primary']
+                    ]) ?>
+                    <?php if ($model->status != Ticket::STATUS_CLOSED): ?>
+                        <?= Html::a(\powerkernel\support\Module::t('support', 'Close'), [
+                            'close',
+                            'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
+                        ], ['class' => 'btn btn-warning']) ?>
+                    <?php endif; ?>
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>

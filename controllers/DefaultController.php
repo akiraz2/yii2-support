@@ -2,12 +2,12 @@
 
 namespace powerkernel\support\controllers;
 
-use backend\controllers\BackendController;
+use yii\web\Controller;
 
 /**
  * Default controller for the `ticket` module
  */
-class DefaultController extends BackendController
+class DefaultController extends Controller
 {
     /**
      * Renders the index view for the module

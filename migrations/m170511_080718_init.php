@@ -1,5 +1,7 @@
 <?php
 
+namespace powerkernel\support\migrations;
+
 use yii\db\Migration;
 
 /**
@@ -7,6 +9,8 @@ use yii\db\Migration;
  */
 class m170511_080718_init extends Migration
 {
+    use \powerkernel\support\traits\ModuleTrait;
+
     /**
      * @inheritdoc
      */
@@ -28,15 +32,17 @@ class m170511_080718_init extends Migration
 
         $this->createTable('{{%support_ticket_head}}', [
             'id' => $this->primaryKey(),
-            'cat'=> $this->integer()->null()->defaultValue(null),
+            'cat' => $this->integer()->null()->defaultValue(null),
             'title' => $this->string()->notNull(),
             'status' => $this->string()->notNull(),
             'created_by' => $this->integer()->notNull(),
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ], $tableOptions);
-        $this->addForeignKey('fk_support_ticket_head_created_by-core_account_id', '{{%support_ticket_head}}', 'created_by', '{{%core_account}}', 'id');
-        $this->addForeignKey('fk_support_ticket_head_cat-support_cat_id', '{{%support_ticket_head}}', 'cat', '{{%support_cat}}', 'id');
+        $this->addForeignKey('fk_support_ticket_head_created_by-user_id', '{{%support_ticket_head}}', 'created_by',
+            $this->getModule()->userModel::tableName(), $this->getModule()->userPK);
+        $this->addForeignKey('fk_support_ticket_head_cat-support_cat_id', '{{%support_ticket_head}}', 'cat',
+            '{{%support_cat}}', 'id');
 
         $this->createTable('{{%support_ticket_content}}', [
             'id' => $this->primaryKey(),
@@ -46,8 +52,10 @@ class m170511_080718_init extends Migration
             'created_at' => $this->integer()->notNull(),
             'updated_at' => $this->integer()->notNull(),
         ], $tableOptions);
-        $this->addForeignKey('fk_support_ticket_content_id-support_ticket_head_id', '{{%support_ticket_content}}', 'id_ticket', '{{%support_ticket_head}}', 'id', 'CASCADE', 'CASCADE');
-        $this->addForeignKey('fk_support_ticket_content_created_by-core_account_id', '{{%support_ticket_content}}', 'created_by', '{{%core_account}}', 'id');
+        $this->addForeignKey('fk_support_ticket_content_id-support_ticket_head_id', '{{%support_ticket_content}}',
+            'id_ticket', '{{%support_ticket_head}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey('fk_support_ticket_content_created_by-user_id', '{{%support_ticket_content}}',
+            'created_by', $this->getModule()->userModel::tableName(), $this->getModule()->userPK);
     }
 
     /**

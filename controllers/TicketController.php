@@ -7,20 +7,19 @@
 
 namespace powerkernel\support\controllers;
 
-use common\components\BackendFilter;
-use common\components\MainController;
 use powerkernel\support\models\Content;
-use Yii;
 use powerkernel\support\models\Ticket;
 use powerkernel\support\models\TicketSearch;
+use Yii;
 use yii\filters\AccessControl;
-use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * TicketController implements the CRUD actions for Ticket model.
  */
-class TicketController extends MainController
+class TicketController extends Controller
 {
     /**
      * @inheritdoc
@@ -35,14 +34,14 @@ class TicketController extends MainController
                 ],
             ],
 
-            'backend' => [
+            /*'backend' => [
                 'class' => BackendFilter::className(),
                 'actions' => [
                     'index',
                 ],
-            ],
+            ],*/
 
-            'access' => [
+            /*'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
@@ -55,7 +54,7 @@ class TicketController extends MainController
                         'allow' => true,
                     ],
                 ],
-            ],
+            ],*/
         ];
     }
 
@@ -66,7 +65,7 @@ class TicketController extends MainController
     public function actionIndex()
     {
 
-        $this->view->title = Yii::t('support', 'Tickets');
+        $this->view->title = \powerkernel\support\Module::t('support', 'Tickets');
         $searchModel = new TicketSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -84,8 +83,8 @@ class TicketController extends MainController
     {
 
         $this->layout = Yii::$app->view->theme->basePath . '/account.php';
-        $this->view->title = Yii::t('support', 'My Tickets');
-        $searchModel = new TicketSearch(['userSearch'=>true]);
+        $this->view->title = \powerkernel\support\Module::t('support', 'My Tickets');
+        $searchModel = new TicketSearch(['userSearch' => true]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('manage', [
@@ -102,14 +101,14 @@ class TicketController extends MainController
      */
     public function actionView($id)
     {
-        if(Yii::$app->id == 'app-frontend'){
+        if (Yii::$app->id == 'app-frontend') {
             $this->layout = Yii::$app->view->theme->basePath . '/account.php';
         }
-        if(Yii::$app->id == 'app-backend'){
+        if (Yii::$app->id == 'app-backend') {
             $this->layout = Yii::$app->view->theme->basePath . '/admin.php';
         }
 
-        $model=$this->findModel($id);
+        $model = $this->findModel($id);
         if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
@@ -182,89 +181,28 @@ class TicketController extends MainController
         //$this->registerMetaTagJsonLD($data);
 
         // reply
-        $reply=new Content();
-        $reply->id_ticket=$model->id;
-        $reply->created_by=Yii::$app->user->id;
+        $reply = new Content();
+        $reply->id_ticket = $model->id;
+        $reply->created_by = Yii::$app->user->id;
         if ($reply->load(Yii::$app->request->post()) && $reply->save()) {
-            if(Yii::$app->user->id==$model->created_by){
-                $model->status=Ticket::STATUS_OPEN;
+            if (Yii::$app->user->id == $model->created_by) {
+                $model->status = Ticket::STATUS_OPEN;
+                $model->save();
+            } else {
+                $model->status = Ticket::STATUS_WAITING;
                 $model->save();
             }
-            else {
-                $model->status=Ticket::STATUS_WAITING;
-                $model->save();
-            }
-            return $this->redirect(['view', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->_id:$model->id]);
+            return $this->redirect([
+                'view',
+                'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
+            ]);
         }
-
 
 
         return $this->render('view', [
             'model' => $model,
-            'reply'=>$reply
+            'reply' => $reply
         ]);
-    }
-
-    /**
-     * Creates a new Ticket model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $this->layout = Yii::$app->view->theme->basePath . '/account.php';
-        $this->view->title = Yii::t('support', 'Open Ticket');
-        $model = new Ticket();
-        $model->setScenario('create');
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->_id:$model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    /**
-     * close a ticket
-     * @param integer $id
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException
-     */
-    public function actionClose($id){
-        $model = $this->findModel($id);
-        if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
-            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }
-
-        if($model->status!=Ticket::STATUS_CLOSED){
-            $post=new Content();
-            $post->id_ticket=$model->id;
-            $post->created_by=Yii::$app->user->id;
-            $post->content=Yii::$app->getModule('support')->t('{USER} closed the ticket.', ['USER'=>Yii::$app->user->identity->fullname]);
-            if($post->save()){
-                $model->status=Ticket::STATUS_CLOSED;
-                if(!$model->save()){
-                    Yii::$app->session->setFlash('danger', json_encode($model->errors));
-                }
-            }
-        }
-
-        return $this->redirect(['view', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->_id:$model->id]);
-    }
-
-    /**
-     * Deletes an existing Ticket model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     /**
@@ -281,5 +219,75 @@ class TicketController extends MainController
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
+    }
+
+    /**
+     * Creates a new Ticket model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $this->layout = Yii::$app->view->theme->basePath . '/account.php';
+        $this->view->title = \powerkernel\support\Module::t('support', 'Open Ticket');
+        $model = new Ticket();
+        $model->setScenario('create');
+
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect([
+                'view',
+                'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
+            ]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * close a ticket
+     * @param integer $id
+     * @return \yii\web\Response
+     * @throws NotFoundHttpException
+     */
+    public function actionClose($id)
+    {
+        $model = $this->findModel($id);
+        if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
+            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        }
+
+        if ($model->status != Ticket::STATUS_CLOSED) {
+            $post = new Content();
+            $post->id_ticket = $model->id;
+            $post->created_by = Yii::$app->user->id;
+            $post->content = \powerkernel\support\Module::t('support', '{USER} closed the ticket.',
+                ['USER' => Yii::$app->user->identity->fullname]);
+            if ($post->save()) {
+                $model->status = Ticket::STATUS_CLOSED;
+                if (!$model->save()) {
+                    Yii::$app->session->setFlash('danger', json_encode($model->errors));
+                }
+            }
+        }
+
+        return $this->redirect([
+            'view',
+            'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
+        ]);
+    }
+
+    /**
+     * Deletes an existing Ticket model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
     }
 }

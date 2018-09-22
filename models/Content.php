@@ -31,24 +31,6 @@ class Content extends ContentBase
     const STATUS_ACTIVE = 10;
     const STATUS_INACTIVE = 20;
 
-
-    /**
-     * get status list
-     * @param null $e
-     * @return array
-     */
-    public static function getStatusOption($e = null)
-    {
-        $option = [
-            self::STATUS_ACTIVE => Yii::$app->getModule('support')->t('Active'),
-            self::STATUS_INACTIVE => Yii::$app->getModule('support')->t('Inactive'),
-        ];
-        if (is_array($e))
-            foreach ($e as $i)
-                unset($option[$i]);
-        return $option;
-    }
-
     /**
      * get status text
      * @return string
@@ -60,9 +42,27 @@ class Content extends ContentBase
         if (!empty($status) && in_array($status, array_keys($list))) {
             return $list[$status];
         }
-        return Yii::$app->getModule('support')->t('Unknown');
+        return \powerkernel\support\Module::t('support', 'Unknown');
     }
 
+    /**
+     * get status list
+     * @param null $e
+     * @return array
+     */
+    public static function getStatusOption($e = null)
+    {
+        $option = [
+            self::STATUS_ACTIVE => \powerkernel\support\Module::t('support', 'Active'),
+            self::STATUS_INACTIVE => \powerkernel\support\Module::t('support', 'Inactive'),
+        ];
+        if (is_array($e)) {
+            foreach ($e as $i) {
+                unset($option[$i]);
+            }
+        }
+        return $option;
+    }
 
     /**
      * @inheritdoc
@@ -72,8 +72,20 @@ class Content extends ContentBase
         return [
             [['id_ticket', 'content'], 'required'],
             [['content'], 'string'],
-            [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => Account::className(), 'targetAttribute' => ['created_by' => Yii::$app->params['mongodb']['account'] ? '_id' : 'id']],
-            [['id_ticket'], 'exist', 'skipOnError' => true, 'targetClass' => Ticket::className(), 'targetAttribute' => ['id_ticket' => Yii::$app->getModule('support')->params['db'] === 'mongodb' ? '_id' : 'id']],
+            [
+                ['created_by'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Account::className(),
+                'targetAttribute' => ['created_by' => Yii::$app->params['mongodb']['account'] ? '_id' : 'id']
+            ],
+            [
+                ['id_ticket'],
+                'exist',
+                'skipOnError' => true,
+                'targetClass' => Ticket::className(),
+                'targetAttribute' => ['id_ticket' => Yii::$app->getModule('support')->params['db'] === 'mongodb' ? '_id' : 'id']
+            ],
         ];
     }
 
@@ -83,12 +95,12 @@ class Content extends ContentBase
     public function attributeLabels()
     {
         return [
-            'id' => Yii::$app->getModule('support')->t('ID'),
-            'id_ticket' => Yii::$app->getModule('support')->t('Id Ticket'),
-            'content' => Yii::$app->getModule('support')->t('Content'),
-            'created_by' => Yii::$app->getModule('support')->t('Created By'),
-            'created_at' => Yii::$app->getModule('support')->t('Created At'),
-            'updated_at' => Yii::$app->getModule('support')->t('Updated At'),
+            'id' => \powerkernel\support\Module::t('support', 'ID'),
+            'id_ticket' => \powerkernel\support\Module::t('support', 'Id Ticket'),
+            'content' => \powerkernel\support\Module::t('support', 'Content'),
+            'created_by' => \powerkernel\support\Module::t('support', 'Created By'),
+            'created_at' => \powerkernel\support\Module::t('support', 'Created At'),
+            'updated_at' => \powerkernel\support\Module::t('support', 'Updated At'),
         ];
     }
 
@@ -134,7 +146,8 @@ class Content extends ContentBase
             }
 
             /* send email */
-            $subject = Yii::$app->getModule('support')->t('[{APP} Ticket #{ID}] Re: {TITLE}', ['APP' => Yii::$app->name, 'ID' => $this->ticket->id, 'TITLE' => $this->ticket->title]);
+            $subject = \powerkernel\support\Module::t('support', '[{APP} Ticket #{ID}] Re: {TITLE}',
+                ['APP' => Yii::$app->name, 'ID' => $this->ticket->id, 'TITLE' => $this->ticket->title]);
             Yii::$app->mailer
                 ->compose(
                     [

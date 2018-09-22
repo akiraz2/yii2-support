@@ -22,9 +22,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'status')->dropDownList(Cat::getStatusOption()) ?>
 
     <div class="form-group">
-        <?= \common\components\SubmitButton::widget(['text'=>$model->isNewRecord ? Yii::t('support', 'Create') : Yii::t('support', 'Update'), 'options'=>['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']]) ?>
+        <?= \yii\helpers\Html::submitButton($model->isNewRecord ? \powerkernel\support\Module::t('support', 'Create') :
+            \powerkernel\support\Module::t('support', 'Update'),
+            ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
-
     <?php ActiveForm::end(); ?>
-
 </div>

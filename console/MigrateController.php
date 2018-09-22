@@ -6,6 +6,7 @@
  */
 
 namespace powerkernel\support\console;
+
 use MongoDB\BSON\UTCDateTime;
 use yii\db\Query;
 
@@ -15,7 +16,8 @@ use yii\db\Query;
  */
 class MigrateController extends \yii\console\Controller
 {
-    public function actionIndex(){
+    public function actionIndex()
+    {
         echo "Migrating Cat...\n";
         /* logs */
         $rows = (new Query())->select('*')->from('{{%support_cat}}')->all();
@@ -24,8 +26,8 @@ class MigrateController extends \yii\console\Controller
             $collection->insert([
                 'title' => $row['title'],
                 'status' => (int)$row['status'],
-                'created_at' => new UTCDateTime($row['created_at']*1000),
-                'updated_at' => new UTCDateTime($row['updated_at']*1000),
+                'created_at' => new UTCDateTime($row['created_at'] * 1000),
+                'updated_at' => new UTCDateTime($row['updated_at'] * 1000),
             ]);
         }
         echo "Cat migration completed.\n";

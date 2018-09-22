@@ -1,8 +1,8 @@
 <?php
 
 use powerkernel\support\models\Cat;
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
@@ -23,11 +23,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
 <div class="cat-index">
     <div class="box box-primary">
         <div class="box-body">
-
-
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-
             <?php Pjax::begin(); ?>
             <div class="table-responsive">
                 <?= GridView::widget([
@@ -48,20 +44,28 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                         //    'filter' => DatePicker::widget(['model' => $searchModel, 'attribute' => 'created_at', 'dateFormat' => 'yyyy-MM-dd', 'options' => ['class' => 'form-control']]),
                         //    'contentOptions'=>['style'=>'min-width: 80px']
                         //],
-                        ['attribute' => 'status', 'value' => function ($model){return $model->statusColorText;}, 'filter'=> Cat::getStatusOption(), 'format'=>'raw'],
+                        [
+                            'attribute' => 'status',
+                            'value' => function ($model) {
+                                return $model->statusColorText;
+                            },
+                            'filter' => Cat::getStatusOption(),
+                            'format' => 'raw'
+                        ],
                         ['class' => 'yii\grid\ActionColumn'],
                     ],
                 ]); ?>
             </div>
             <?php Pjax::end(); ?>
             <p>
-                <?= Html::a(Yii::t('support', 'Add Category'), ['create'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a(\powerkernel\support\Module::t('support', 'Add Category'), ['create'],
+                    ['class' => 'btn btn-success']) ?>
             </p>
 
         </div>
         <!-- Loading (remove the following to stop the loading)-->
         <div class="overlay grid-view-overlay hidden">
-            <?= \powerkernel\fontawesome\Icon::widget(['icon' => 'refresh fa-spin']) ?>
+            <i class="fa refresh fa-spin"></i>
         </div>
         <!-- end loading -->
     </div>

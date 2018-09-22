@@ -9,9 +9,12 @@
 /* @var $model powerkernel\support\models\Cat */
 
 
-$this->params['breadcrumbs'][] = ['label' => Yii::t('support', 'Categories'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = [
+    'label' => \powerkernel\support\Module::t('support', 'Categories'),
+    'url' => ['index']
+];
 $this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = Yii::t('support', 'Update');
+$this->params['breadcrumbs'][] = \powerkernel\support\Module::t('support', 'Update');
 
 /* misc */
 //$js=file_get_contents(__DIR__.'/index.min.js');

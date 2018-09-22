@@ -2,8 +2,8 @@
 
 use powerkernel\support\models\Cat;
 use powerkernel\support\models\Ticket;
-use yii\helpers\Html;
 use yii\grid\GridView;
+use yii\helpers\Html;
 use yii\jui\DatePicker;
 use yii\widgets\Pjax;
 
@@ -35,9 +35,13 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                         ['class' => 'yii\grid\SerialColumn'],
 
                         //'id',
-                        ['attribute' => 'cat', 'value' => function ($model) {
-                            return $model->category->title;
-                        }, 'filter' => Cat::getCatList()],
+                        [
+                            'attribute' => 'cat',
+                            'value' => function ($model) {
+                                return $model->category->title;
+                            },
+                            'filter' => Cat::getCatList()
+                        ],
                         'title',
                         //'status',
                         //'created_by',
@@ -45,12 +49,24 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                         // 'updated_at',
 
                         //['attribute' => 'created_by', 'value' => function ($model){return $model->createdBy->fullname;}],
-                        ['attribute' => 'status', 'value' => function ($model){return $model->statusColorText;}, 'filter'=> Ticket::getStatusOption(), 'format'=>'raw'],
+                        [
+                            'attribute' => 'status',
+                            'value' => function ($model) {
+                                return $model->statusColorText;
+                            },
+                            'filter' => Ticket::getStatusOption(),
+                            'format' => 'raw'
+                        ],
                         [
                             'attribute' => 'created_at',
                             'value' => 'createdAt',
                             'format' => 'dateTime',
-                            'filter' => DatePicker::widget(['model' => $searchModel, 'attribute' => 'created_at', 'dateFormat' => 'yyyy-MM-dd', 'options' => ['class' => 'form-control']]),
+                            'filter' => DatePicker::widget([
+                                'model' => $searchModel,
+                                'attribute' => 'created_at',
+                                'dateFormat' => 'yyyy-MM-dd',
+                                'options' => ['class' => 'form-control']
+                            ]),
                             'contentOptions' => ['style' => 'min-width: 80px']
                         ],
                         [
@@ -63,7 +79,8 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
             </div>
             <?php Pjax::end(); ?>
             <p>
-                <?= Html::a(Yii::t('support', 'Open Ticket'), ['create'], ['class' => 'btn btn-success']) ?>
+                <?= Html::a(\powerkernel\support\Module::t('support', 'Open Ticket'), ['create'],
+                    ['class' => 'btn btn-success']) ?>
             </p>
 
         </div>

@@ -7,7 +7,8 @@
 
 namespace powerkernel\support\models;
 
-use Yii;
+use powerkernel\support\Module;
+use powerkernel\support\traits\ModuleTrait;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -23,27 +24,21 @@ use yii\helpers\ArrayHelper;
  */
 class Cat extends CatBase
 {
-
+    use ModuleTrait;
 
     const STATUS_ACTIVE = 10;
     const STATUS_INACTIVE = 20;
 
-
     /**
-     * get status list
-     * @param null $e
+     * get categories list
      * @return array
      */
-    public static function getStatusOption($e = null)
+    public static function getCatList()
     {
-        $option = [
-            self::STATUS_ACTIVE => Yii::$app->getModule('support')->t('Active'),
-            self::STATUS_INACTIVE => Yii::$app->getModule('support')->t('Inactive'),
-        ];
-        if (is_array($e))
-            foreach ($e as $i)
-                unset($option[$i]);
-        return $option;
+        $cats = self::find()->where(['status' => self::STATUS_ACTIVE])->all();
+        return ArrayHelper::map($cats, function ($model) {
+            return is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id;
+        }, 'title');
     }
 
     /**
@@ -73,9 +68,27 @@ class Cat extends CatBase
         if (!empty($status) && in_array($status, array_keys($list))) {
             return $list[$status];
         }
-        return Yii::$app->getModule('support')->t('Unknown');
+        return \powerkernel\support\Module::t('support', 'Unknown');
     }
 
+    /**
+     * get status list
+     * @param null $e
+     * @return array
+     */
+    public static function getStatusOption($e = null)
+    {
+        $option = [
+            self::STATUS_ACTIVE => Module::t('support', 'Active'),
+            self::STATUS_INACTIVE => Module::t('support', 'Inactive'),
+        ];
+        if (is_array($e)) {
+            foreach ($e as $i) {
+                unset($option[$i]);
+            }
+        }
+        return $option;
+    }
 
     /**
      * @inheritdoc
@@ -95,11 +108,11 @@ class Cat extends CatBase
     public function attributeLabels()
     {
         return [
-            'id' => Yii::$app->getModule('support')->t('ID'),
-            'title' => Yii::$app->getModule('support')->t('Title'),
-            'status' => Yii::$app->getModule('support')->t('Status'),
-            'created_at' => Yii::$app->getModule('support')->t('Created At'),
-            'updated_at' => Yii::$app->getModule('support')->t('Updated At'),
+            'id' => Module::t('support', 'ID'),
+            'title' => Module::t('support', 'Title'),
+            'status' => Module::t('support', 'Status'),
+            'created_at' => Module::t('support', 'Created At'),
+            'updated_at' => Module::t('support', 'Updated At'),
         ];
     }
 
@@ -109,18 +122,6 @@ class Cat extends CatBase
     public function getTickets()
     {
         return $this->hasMany(Ticket::className(), ['cat' => 'id']);
-    }
-
-    /**
-     * get categories list
-     * @return array
-     */
-    public static function getCatList()
-    {
-        $cats = self::find()->where(['status' => self::STATUS_ACTIVE])->all();
-        return ArrayHelper::map($cats, function ($model) {
-            return is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id;
-        }, 'title');
     }
 
     /**

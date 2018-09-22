@@ -11,7 +11,10 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model powerkernel\support\models\Cat */
 
-$this->params['breadcrumbs'][] = ['label' => Yii::t('support', 'Categories'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = [
+    'label' => \powerkernel\support\Module::t('support', 'Categories'),
+    'url' => ['index']
+];
 $this->params['breadcrumbs'][] = $this->title;
 
 /* misc */
@@ -36,14 +39,18 @@ $this->params['breadcrumbs'][] = $this->title;
                 ]) ?>
             </div>
             <p>
-                <?= Html::a(Yii::t('support', 'Update'), ['update', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->id:$model->id], ['class' => 'btn btn-primary']) ?>
-                <?= Html::a(Yii::t('support', 'Delete'), ['delete', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->id:$model->id], [
-                    'class' => 'btn btn-danger',
-                    'data' => [
-                        'confirm' => Yii::t('support', 'Are you sure you want to delete this item?'),
-                        'method' => 'post',
-                    ],
-                ]) ?>
+                <?= Html::a(\powerkernel\support\Module::t('support', 'Update'),
+                    ['update', 'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->id : $model->id],
+                    ['class' => 'btn btn-primary']) ?>
+                <?= Html::a(\powerkernel\support\Module::t('support', 'Delete'),
+                    ['delete', 'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->id : $model->id], [
+                        'class' => 'btn btn-danger',
+                        'data' => [
+                            'confirm' => \powerkernel\support\Module::t('support',
+                                'Are you sure you want to delete this item?'),
+                            'method' => 'post',
+                        ],
+                    ]) ?>
             </p>
         </div>
     </div>

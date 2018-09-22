@@ -7,17 +7,18 @@
 
 namespace powerkernel\support\controllers;
 
-use backend\controllers\BackendController;
-use Yii;
 use powerkernel\support\models\Cat;
 use powerkernel\support\models\CatSearch;
-use yii\web\NotFoundHttpException;
+use powerkernel\support\Module;
+use Yii;
 use yii\filters\VerbFilter;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 
 /**
  * CatController implements the CRUD actions for Cat model.
  */
-class CatController extends BackendController
+class CatController extends Controller
 {
     /**
      * @inheritdoc
@@ -40,7 +41,7 @@ class CatController extends BackendController
      */
     public function actionIndex()
     {
-        $this->view->title = Yii::t('support', 'Categories');
+        $this->view->title = Module::t('support', 'Categories');
         $searchModel = new CatSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -57,11 +58,11 @@ class CatController extends BackendController
      */
     public function actionView($id)
     {
-        $model=$this->findModel($id);
+        $model = $this->findModel($id);
 
         /* metaData */
         //$title=$model->title;
-        $this->view->title = Yii::t('support', 'Category: {NAME}', ['NAME'=>$model->title]);
+        $this->view->title = \powerkernel\support\Module::t('support', 'Category: {NAME}', ['NAME' => $model->title]);
         //$keywords = $model->tags;
         //$description = $model->desc;
         //$metaTags[]=['name'=>'keywords', 'content'=>$keywords];
@@ -133,17 +134,36 @@ class CatController extends BackendController
     }
 
     /**
+     * Finds the Cat model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Cat the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Cat::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        }
+    }
+
+    /**
      * Creates a new Cat model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $this->view->title = Yii::t('support', 'Add Category');
+        $this->view->title = \powerkernel\support\Module::t('support', 'Add Category');
         $model = new Cat();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->id:$model->id]);
+            return $this->redirect([
+                'view',
+                'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->id : $model->id
+            ]);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -160,10 +180,13 @@ class CatController extends BackendController
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $this->view->title = Yii::t('support', 'Update: {NAME}', ['NAME'=>$model->title]);
+        $this->view->title = \powerkernel\support\Module::t('support', 'Update: {NAME}', ['NAME' => $model->title]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => is_a($model, '\yii\mongodb\ActiveRecord')?(string)$model->id:$model->id]);
+            return $this->redirect([
+                'view',
+                'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->id : $model->id
+            ]);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -182,21 +205,5 @@ class CatController extends BackendController
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Cat model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Cat the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Cat::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }
     }
 }
