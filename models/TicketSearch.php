@@ -30,7 +30,7 @@ class TicketSearch extends Ticket
     public function rules()
     {
         return [
-            [['category_id', 'title', 'status', 'created_at', 'user_id'], 'safe'],
+            [['category_id', 'title', 'status', 'created_at', 'user_id', 'hash_id', 'id'], 'safe'],
         ];
     }
 
@@ -77,6 +77,7 @@ class TicketSearch extends Ticket
         // grid filtering conditions
         $query->andFilterWhere([
             //'id' => $this->id,
+            'hash_id' => $this->hash_id,
             'category_id' => $this->category_id,
             'status' => $this->status,
             //'user_id' => $this->user_id,

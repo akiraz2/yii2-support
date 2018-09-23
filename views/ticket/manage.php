@@ -28,7 +28,8 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
                     'columns' => [
-                        'id',
+                        //'id',
+                        'hash_id',
                         [
                             'attribute' => 'category_id',
                             'value' => function ($model) {
