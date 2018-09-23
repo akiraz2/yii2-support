@@ -33,7 +33,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                         [
                             'attribute' => 'category_id',
                             'value' => function ($model) {
-                                return $model->category->title;
+                                return $model->category ? $model->category->title : '';
                             },
                             'filter' => Category::getCatList()
                         ],
@@ -45,15 +45,15 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'attribute' => 'user_id',
                             'value' => function ($model) {
                                 $module = Yii::$app->getModule('support');
-                                if ($module->urlViewUser) {
-                                    return \yii\helpers\Html::a($model->user->{$module->userName},
+                                if ($model->user && $module->urlViewUser) {
+                                    return \yii\helpers\Html::a($model->user_name,
                                         Yii::$app->urlManager->createUrl([
                                             $module->urlViewUser,
                                             $module->userPK => $model->user_id
                                         ]),
                                         ['data-pjax' => 0]);
                                 } else {
-                                    return $model->user->{$module->userName};
+                                    return $model->getNameEmail();
                                 }
                             },
                             'format' => 'raw'
@@ -78,7 +78,13 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             ]),
                             'contentOptions' => ['style' => 'min-width: 80px']
                         ],
-                        ['class' => 'yii\grid\ActionColumn', 'template' => '{view} {delete}'],
+                        [
+                            'class' => 'yii\grid\ActionColumn',
+                            'template' => '{view} {delete}',
+                            'urlCreator' => function ($action, $model, $key, $index) {
+                                return \yii\helpers\Url::to([$action, 'id' => $model->hash_id]);
+                            }
+                        ],
                     ],
                 ]); ?>
             </div>

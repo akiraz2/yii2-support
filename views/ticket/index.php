@@ -64,7 +64,10 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                         ],
                         [
                             'class' => 'yii\grid\ActionColumn',
-                            'template' => '{view}'
+                            'template' => '{view}',
+                            'urlCreator' => function ($action, $model, $key, $index) {
+                                return \yii\helpers\Url::to([$action, 'id' => $model->hash_id]);
+                            }
                         ],
 
                     ],

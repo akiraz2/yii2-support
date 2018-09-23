@@ -18,7 +18,9 @@
   "prefer-stable": true,
   "require": {
     "yiisoft/yii2": "~2.0",
-    "hashids/hashids": "^2.0"
+    "hashids/hashids": "^2.0",
+    "yiidoc/yii2-redactor": "*",
+    "php-imap/php-imap": "^3.0"
   },
   "autoload": {
     "psr-4": {

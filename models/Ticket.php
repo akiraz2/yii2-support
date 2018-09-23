@@ -8,6 +8,7 @@
 namespace powerkernel\support\models;
 
 use Hashids\Hashids;
+use PhpImap\IncomingMail;
 use powerkernel\support\Mailer;
 use powerkernel\support\traits\ModuleTrait;
 use Yii;
@@ -49,6 +50,7 @@ class Ticket extends TicketBase
     const STATUS_CLOSED = 100;
 
     public $content;
+    public $info;
 
     /**
      * get status text
@@ -115,6 +117,19 @@ class Ticket extends TicketBase
                 'Unknown') . '</span>';
     }
 
+    public static function getTypeList()
+    {
+        return [
+            self::TYPE_SITE => \powerkernel\support\Module::t('support', 'Site'),
+            self::TYPE_EMAIL => \powerkernel\support\Module::t('support', 'Email'),
+            self::TYPE_TELEGRAM => \powerkernel\support\Module::t('support', 'Telegram'),
+        ];
+    }
+
+    public function getType()
+    {
+        return self::getTypeList()[$this->type_id];
+    }
 
     /**
      * @inheritdoc
@@ -126,7 +141,7 @@ class Ticket extends TicketBase
             [['priority'], 'default', 'value' => self::PRIORITY_MIDDLE],
             [['type_id'], 'default', 'value' => self::TYPE_SITE],
 
-            [['title', 'category_id',], 'required'],
+            [['title',], 'required'],
             [['title'], 'string', 'max' => 255],
 
             [['status', 'priority'], 'number'],
@@ -212,13 +227,14 @@ class Ticket extends TicketBase
     public function beforeSave($insert)
     {
         if ($insert) {
-            if ($this->type_id === self::TYPE_SITE) {
+            if ($this->type_id == self::TYPE_SITE) {
                 $this->user_id = Yii::$app->user->id;
                 $this->user_name = Yii::$app->user->identity->{$this->getModule()->userName};
+                $this->user_contact = Yii::$app->user->identity->{$this->getModule()->userEmail};
             }
-            if ($this->type_id === self::TYPE_EMAIL) {
+            if ($this->type_id == self::TYPE_EMAIL) {
                 if (($userModel = $this->getModule()->userModel::findOne([$this->getModule()->userEmail => $this->user_contact])) && $userModel !== null) {
-                    $this->user_id = $this->getModule()->userModel::findOne([$this->getModule()->userEmail => $this->user_contact]);
+                    $this->user_id = $userModel->{$this->getModule()->userPK};
                 }
             }
         }
@@ -240,7 +256,8 @@ class Ticket extends TicketBase
             $ticketContent = new Content();
             $ticketContent->id_ticket = $this->id;
             $ticketContent->content = $this->content;
-            $ticketContent->user_id = Yii::$app->user->id;
+            $ticketContent->info = $this->info;
+            $ticketContent->user_id = $this->user_id;
             if ($ticketContent->save()) {
                 if ($this->getModule()->notifyByEmail) {
                     /* send email */
@@ -267,7 +284,7 @@ class Ticket extends TicketBase
         }
         return \Yii::$app->get($this->getModule()->urlManagerFrontend)->$act([
             'support/ticket/view',
-            'id' => (string)$this->id
+            'id' => (string)$this->hash_id
         ]);
     }
 
@@ -304,5 +321,27 @@ class Ticket extends TicketBase
     protected function getMailer()
     {
         return \Yii::$container->get(Mailer::className());
+    }
+
+    public function loadFromEmail(IncomingMail $mail)
+    {
+        $this->type_id = self::TYPE_EMAIL;
+        //$mail->id;
+        //$mail->date;
+        $this->title = $mail->subject;
+        $this->user_name = $mail->fromName;
+        $this->user_contact = $mail->fromAddress;
+        $this->content = $mail->textHtml ?? $mail->textPlain;
+        $this->info = ($mail->headersRaw);
+    }
+
+    public function getNameEmail()
+    {
+        return $this->user_name . ' (' . $this->user_contact . ')';
+    }
+
+    public function isEmail()
+    {
+        return $this->type_id == self::TYPE_EMAIL;
     }
 }

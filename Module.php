@@ -54,6 +54,8 @@ class Module extends \yii\base\Module
      */
     public $adminMatchCallback = true;
 
+    public $redactorModule = 'redactor';
+
     /**
      * Translate message
      * @param $message
@@ -120,5 +122,10 @@ class Module extends \yii\base\Module
     public function isMongoDb()
     {
         return $this->dbType === 'mongodb';
+    }
+
+    public function getIsBackend()
+    {
+        return Yii::$app->id === $this->appBackendId;
     }
 }

@@ -27,8 +27,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="ticket-view">
     <div class="box box-info">
         <div class="box-header with-border">
-            <h1 class="box-title">&num;<?= $model->id ?> <?= $model->title ?>
-                <small style="margin-left: 10px"><?= $model->category->title ?></small>
+            <h1 class="box-title">Ticket &num;<?= $model->hash_id ?> <?= $model->title ?>
+                <small style="margin-left: 10px"><?= $model->category? $model->category->title : '-' ?></small>
+                <small style="margin-left: 10px"><?= $model->getType() ?></small>
             </h1>
 
             <div class="pull-right">
@@ -51,10 +52,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div class="timeline-item">
                             <span class="time"><i
                                         class="fa fa-clock-o"></i> <?= Yii::$app->formatter->asDatetime($post->createdAt) ?></span>
-                            <h3 class="timeline-header"><?= !empty($post->user_id) ? $post->user->{Yii::$app->getModule('support')->userName} : \powerkernel\support\Module::t('support',
-                                    'Ticket System') ?></h3>
+                            <h3 class="timeline-header"><?= !empty($post->user_id) ? $post->user->{Yii::$app->getModule('support')->userName} : $post->ticket->getNameEmail() ?></h3>
                             <div class="timeline-body">
-                                <?= Yii::$app->formatter->asNtext($post->content) ?>
+                                <?= Yii::$app->formatter->asHtml($post->content) ?>
                             </div>
                         </div>
                     </li>
@@ -67,7 +67,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <div style="padding-top: 10px">
                 <?php $form = ActiveForm::begin(); ?>
-                <?= $form->field($reply, 'content')->textarea(['rows' => 8])->label(false) ?>
+                <?= $form->field($reply, 'content')->widget(\yii\redactor\widgets\Redactor::className())->label(false) ?>
                 <div class="form-group">
                     <?= \yii\helpers\Html::submitButton(\powerkernel\support\Module::t('support', 'Reply'),
                         ['class' => 'btn btn-primary']) ?>

@@ -43,7 +43,7 @@
                                 <tr>
                                     <td class="content-block" style="vertical-align: top; padding: 0 0 20px;"
                                         valign="top">
-                                        <?= Yii::$app->formatter->asNtext($model->content) ?>
+                                        <?= Yii::$app->formatter->asHtml($model->content) ?>
                                     </td>
                                 </tr>
 

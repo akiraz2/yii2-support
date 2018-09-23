@@ -125,7 +125,7 @@ class TicketController extends Controller
             }
             return $this->redirect([
                 'view',
-                'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
+                'id' => $model->hash_id
             ]);
         }
 
@@ -145,7 +145,7 @@ class TicketController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Ticket::findOne($id)) !== null) {
+        if (($model = Ticket::findOne(['hash_id' => $id])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
@@ -166,7 +166,7 @@ class TicketController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect([
                 'view',
-                'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
+                'id' => $model->hash_id
             ]);
         } else {
             return $this->render('create', [
