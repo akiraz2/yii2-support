@@ -42,14 +42,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php foreach ($model->contents as $post) : ?>
                     <li>
                         <?php if (empty($post->created_by)): ?>
-                            <?= Icon::widget(['icon' => 'info-circle bg-aqua']) ?>
+                            <i class="fa fa-info-circle bg-aqua"></i>
                         <?php else: ?>
-                            <?= Icon::widget(['icon' => $post->created_by == $model->created_by ? 'comments bg-blue' : 'comments bg-orange']) ?>
+                            <?= Html::tag('i', '',
+                                ['class' => $post->created_by == $model->created_by ? 'fa fa-comments bg-blue' : 'fa fa-comments bg-orange']) ?>
                         <?php endif; ?>
 
                         <div class="timeline-item">
-                            <span class="time"><?= Icon::widget(['icon' => 'clock-o']) ?> <?= Yii::$app->formatter->asDatetime($post->createdAt) ?></span>
-                            <h3 class="timeline-header"><?= !empty($post->created_by) ? $post->createdBy->fullname : \powerkernel\support\Module::t('support',
+                            <span class="time"><i
+                                        class="fa fa-clock-o"></i> <?= Yii::$app->formatter->asDatetime($post->createdAt) ?></span>
+                            <h3 class="timeline-header"><?= !empty($post->created_by) ? $post->createdBy->{Yii::$app->getModule('support')->userName} : \powerkernel\support\Module::t('support',
                                     'Ticket System') ?></h3>
                             <div class="timeline-body">
                                 <?= Yii::$app->formatter->asNtext($post->content) ?>
@@ -58,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </li>
                 <?php endforeach; ?>
                 <li>
-                    <?= Icon::widget(['icon' => 'clock-o']) ?>
+                    <i class="fa fa-clock-o"></i>
                 </li>
             </ul>
 
@@ -67,10 +69,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php $form = ActiveForm::begin(); ?>
                 <?= $form->field($reply, 'content')->textarea(['rows' => 8])->label(false) ?>
                 <div class="form-group">
-                    <?= \common\components\SubmitButton::widget([
-                        'text' => \powerkernel\support\Module::t('support', 'Reply'),
-                        'options' => ['class' => 'btn btn-primary']
-                    ]) ?>
+                    <?= \yii\helpers\Html::submitButton(\powerkernel\support\Module::t('support', 'Reply'),
+                        ['class' => 'btn btn-primary']) ?>
+
                     <?php if ($model->status != Ticket::STATUS_CLOSED): ?>
                         <?= Html::a(\powerkernel\support\Module::t('support', 'Close'), [
                             'close',

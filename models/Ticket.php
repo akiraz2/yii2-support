@@ -7,8 +7,7 @@
 
 namespace powerkernel\support\models;
 
-use common\models\Account;
-use common\models\Setting;
+use powerkernel\support\traits\ModuleTrait;
 use Yii;
 
 /**
@@ -28,11 +27,11 @@ use Yii;
  */
 class Ticket extends TicketBase
 {
+    use ModuleTrait;
 
-
-    const STATUS_OPEN = 'STATUS_OPEN';
-    const STATUS_WAITING = 'STATUS_WAITING';
-    const STATUS_CLOSED = 'STATUS_CLOSED';
+    const STATUS_OPEN = 0;
+    const STATUS_WAITING = 10;
+    const STATUS_CLOSED = 100;
 
     public $content;
 
@@ -109,21 +108,21 @@ class Ticket extends TicketBase
             [['title', 'cat',], 'required'],
             [['title'], 'string', 'max' => 255],
 
-            [['status'], 'string'],
+            [['status'], 'number'],
 
             [
                 ['cat'],
                 'exist',
                 'skipOnError' => true,
                 'targetClass' => Cat::className(),
-                'targetAttribute' => ['cat' => Yii::$app->getModule('support')->params['db'] === 'mongodb' ? '_id' : 'id']
+                'targetAttribute' => ['cat' => Yii::$app->getModule('support')->isMongoDb() ? '_id' : 'id']
             ],
             [
                 ['created_by'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => Account::className(),
-                'targetAttribute' => ['created_by' => Yii::$app->params['mongodb']['account'] ? '_id' : 'id']
+                'targetClass' => $this->getModule()->userModel,
+                'targetAttribute' => ['created_by' => $this->getModule()->userPK]
             ],
 
             /* custom */
@@ -179,12 +178,7 @@ class Ticket extends TicketBase
      */
     public function getCreatedBy()
     {
-        if (Yii::$app->params['mongodb']['account']) {
-            return $this->hasOne(Account::className(), ['_id' => 'created_by']);
-        } else {
-            return $this->hasOne(Account::className(), ['id' => 'created_by']);
-        }
-
+        return $this->hasOne($this->getModule()->userModel, [$this->getModule()->userPK => 'created_by']);
     }
 
     /**
@@ -223,8 +217,8 @@ class Ticket extends TicketBase
                         ],
                         ['title' => $subject, 'model' => $this]
                     )
-                    ->setFrom([Setting::getValue('outgoingMail') => Yii::$app->name])
-                    ->setTo(Setting::getValue('adminMail'))
+                    ->setFrom([Yii::$app->params['adminEmail'] => Yii::$app->name])
+                    ->setTo(Yii::$app->params['adminEmail'])
                     ->setSubject($subject)
                     ->send();
             }

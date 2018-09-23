@@ -10,8 +10,8 @@ namespace powerkernel\support\controllers;
 use powerkernel\support\models\Content;
 use powerkernel\support\models\Ticket;
 use powerkernel\support\models\TicketSearch;
+use powerkernel\support\traits\ModuleTrait;
 use Yii;
-use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -21,6 +21,8 @@ use yii\web\NotFoundHttpException;
  */
 class TicketController extends Controller
 {
+    use ModuleTrait;
+
     /**
      * @inheritdoc
      */
@@ -81,8 +83,7 @@ class TicketController extends Controller
      */
     public function actionManage()
     {
-
-        $this->layout = Yii::$app->view->theme->basePath . '/account.php';
+        //$this->layout = Yii::$app->view->theme->basePath . '/account.php';
         $this->view->title = \powerkernel\support\Module::t('support', 'My Tickets');
         $searchModel = new TicketSearch(['userSearch' => true]);
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -101,17 +102,17 @@ class TicketController extends Controller
      */
     public function actionView($id)
     {
-        if (Yii::$app->id == 'app-frontend') {
+        /*if (Yii::$app->id == 'app-frontend') {
             $this->layout = Yii::$app->view->theme->basePath . '/account.php';
         }
         if (Yii::$app->id == 'app-backend') {
             $this->layout = Yii::$app->view->theme->basePath . '/admin.php';
-        }
+        }*/
 
         $model = $this->findModel($id);
-        if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
+        /*if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }
+        }*/
 
         /* metaData */
         //$title=$model->title;
@@ -228,7 +229,7 @@ class TicketController extends Controller
      */
     public function actionCreate()
     {
-        $this->layout = Yii::$app->view->theme->basePath . '/account.php';
+        //$this->layout = Yii::$app->view->theme->basePath . '/account.php';
         $this->view->title = \powerkernel\support\Module::t('support', 'Open Ticket');
         $model = new Ticket();
         $model->setScenario('create');
@@ -239,6 +240,7 @@ class TicketController extends Controller
                 'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
             ]);
         } else {
+            var_dump($model->getErrors());
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -254,16 +256,18 @@ class TicketController extends Controller
     public function actionClose($id)
     {
         $model = $this->findModel($id);
-        if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
+        /*if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }
+        }*/
 
         if ($model->status != Ticket::STATUS_CLOSED) {
             $post = new Content();
             $post->id_ticket = $model->id;
             $post->created_by = Yii::$app->user->id;
+            $module = $this->getModule();
+            $userModel = $module->userModel::findOne([$module->userPK => Yii::$app->user->id]);
             $post->content = \powerkernel\support\Module::t('support', '{USER} closed the ticket.',
-                ['USER' => Yii::$app->user->identity->fullname]);
+                ['USER' => $userModel->{$module->userName}]);
             if ($post->save()) {
                 $model->status = Ticket::STATUS_CLOSED;
                 if (!$model->save()) {

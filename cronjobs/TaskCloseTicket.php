@@ -15,7 +15,7 @@ $schedule->call(function (\yii\console\Application $app) {
     $period = 7 * 86400; // 7 days
     $point = time() - $period;
 
-    if (Yii::$app->getModule('support')->params['db'] === 'mongodb') {
+    if (Yii::$app->getModule('support')->isMongoDb()) {
         $tickets = Ticket::find()
             ->where([
                 'status' => Ticket::STATUS_WAITING,
@@ -52,7 +52,7 @@ $schedule->call(function (\yii\console\Application $app) {
     /* delete old logs never bad */
     $period = 30 * 24 * 60 * 60; // 30 days
     $point = time() - $period;
-    if (Yii::$app->params['mongodb']['taskLog']) {
+    if ($this->getModule()->isMongoDb()) {
         \common\models\TaskLog::deleteAll([
             'task' => basename(__FILE__, '.php'),
             'created_at' => ['$lte', new \MongoDB\BSON\UTCDateTime($point * 1000)]

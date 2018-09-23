@@ -10,6 +10,7 @@ namespace powerkernel\support\models;
 
 use common\models\Account;
 use MongoDB\BSON\UTCDateTime;
+use powerkernel\support\traits\ModuleTrait;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -19,6 +20,8 @@ use yii\data\ActiveDataProvider;
  */
 class TicketSearch extends Ticket
 {
+    use ModuleTrait;
+
     public $userSearch = false;
 
     /**
@@ -84,7 +87,7 @@ class TicketSearch extends Ticket
         $query->andFilterWhere(['like', 'title', $this->title]);
 
         if (!empty($this->created_by)) {
-            if (Yii::$app->params['mongodb']['account']) {
+            if ($this->getModule()->isMongoDb()) {
                 $key = '_id';
             } else {
                 $key = 'id';
@@ -92,7 +95,7 @@ class TicketSearch extends Ticket
             $ids = [];
             $owners = Account::find()->select([$key])->where(['like', 'fullname', $this->created_by])->asArray()->all();
             foreach ($owners as $owner) {
-                if (Yii::$app->params['mongodb']['account']) {
+                if ($this->getModule()->isMongoDb()) {
                     $ids[] = (string)$owner[$key];
                 } else {
                     $ids[] = (int)$owner[$key];

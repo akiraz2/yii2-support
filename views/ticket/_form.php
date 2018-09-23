@@ -24,11 +24,9 @@ use yii\widgets\ActiveForm;
     <?= $form->field($model, 'content')->textarea(['rows' => 8]) ?>
 
     <div class="form-group">
-        <?= \common\components\SubmitButton::widget([
-            'text' => $model->isNewRecord ? \powerkernel\support\Module::t('support',
-                'Open') : \powerkernel\support\Module::t('support', 'Update'),
-            'options' => ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']
-        ]) ?>
+        <?= \yii\helpers\Html::submitButton($model->isNewRecord ? \powerkernel\support\Module::t('support', 'Create') :
+            \powerkernel\support\Module::t('support', 'Update'),
+            ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

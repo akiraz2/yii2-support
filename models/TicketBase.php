@@ -14,7 +14,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 
 
-if (Yii::$app->getModule('support')->params['db'] === 'mongodb') {
+if (Yii::$app->getModule('support')->isMongoDb()) {
     /**
      * Class TicketActiveRecord
      * @package common\models

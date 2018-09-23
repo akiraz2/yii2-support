@@ -31,9 +31,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
                     'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
-
-                        //'id',
+                        'id',
                         [
                             'attribute' => 'cat',
                             'value' => function ($model) {
@@ -42,17 +40,23 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'filter' => Cat::getCatList()
                         ],
                         'title',
-                        //'status',
                         //'created_by',
                         // 'created_at',
                         // 'updated_at',
-
                         [
                             'attribute' => 'created_by',
                             'value' => function ($model) {
-                                return \yii\helpers\Html::a($model->createdBy->fullname,
-                                    Yii::$app->urlManager->createUrl(['account/view', 'id' => $model->created_by]),
-                                    ['data-pjax' => 0]);
+                                $module = Yii::$app->getModule('support');
+                                if ($module->urlViewUser) {
+                                    return \yii\helpers\Html::a($model->createdBy->{$module->userName},
+                                        Yii::$app->urlManager->createUrl([
+                                            $module->urlViewUser,
+                                            $module->userPK => $model->created_by
+                                        ]),
+                                        ['data-pjax' => 0]);
+                                } else {
+                                    return $model->createdBy->{$module->userName};
+                                }
                             },
                             'format' => 'raw'
                         ],
@@ -77,7 +81,6 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'contentOptions' => ['style' => 'min-width: 80px']
                         ],
                         ['class' => 'yii\grid\ActionColumn', 'template' => '{view} {delete}'],
-
                     ],
                 ]); ?>
             </div>
@@ -86,7 +89,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
         </div>
         <!-- Loading (remove the following to stop the loading)-->
         <div class="overlay grid-view-overlay hidden">
-            <i class="fa refresh fa-spin"></i>
+            <i class="fa fa-refresh fa-spin"></i>
         </div>
         <!-- end loading -->
     </div>

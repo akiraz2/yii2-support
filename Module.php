@@ -9,6 +9,9 @@ use Yii;
  */
 class Module extends \yii\base\Module
 {
+    /** @var string DB type `sql` or `mongodb` */
+    public $dbType ='sql';
+
     /**
      * @inheritdoc
      */
@@ -22,6 +25,11 @@ class Module extends \yii\base\Module
 
     /** @var string username uses in view (may be field `username` or `email` or `login`) */
     public $userName = 'username';
+
+    public $urlViewUser;
+
+    /** @var array Mailer configuration */
+    public $mailer = [];
 
     /**
      * Translate message
@@ -53,9 +61,6 @@ class Module extends \yii\base\Module
     public function init()
     {
         parent::init();
-        \Yii::configure($this, require(__DIR__ . '/config.php'));
-        //$this->registerTranslations();
-        $this->registerMailer();
     }
 
     /**
@@ -89,32 +94,8 @@ class Module extends \yii\base\Module
         return Yii::t('powerkernel/' . $category, $message, $params, $language);
     }
 
-    /**
-     * Config Mailer for the Module
-     */
-    public function registerMailer()
+    public function isMongoDb()
     {
-        Yii::$app->mailer->setViewPath($this->basePath . '/mail');
-        Yii::$app->mailer->htmlLayout = '@common/mail/layouts/html';
-        Yii::$app->mailer->textLayout = '@common/mail/layouts/text';
-    }
-
-    /**
-     * Register translation for the Module
-     */
-    public function registerTranslations()
-    {
-        /*if(Yii::$app->params['mongodb']['i18n']){
-            $class='common\components\MongoDbMessageSource';
-        }
-        else {
-            $class='common\components\DbMessageSource';
-        }
-        Yii::$app->i18n->translations['support'] = [
-            'class' => $class,
-            'on missingTranslation' => function ($event) {
-                $event->sender->handleMissingTranslation($event);
-            },
-        ];*/
+        return $this->dbType === 'mongodb';
     }
 }

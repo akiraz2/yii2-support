@@ -7,8 +7,7 @@
 
 namespace powerkernel\support\models;
 
-use common\models\Account;
-use common\models\Setting;
+use powerkernel\support\traits\ModuleTrait;
 use Yii;
 
 /**
@@ -26,7 +25,7 @@ use Yii;
  */
 class Content extends ContentBase
 {
-
+    use ModuleTrait;
 
     const STATUS_ACTIVE = 10;
     const STATUS_INACTIVE = 20;
@@ -76,15 +75,15 @@ class Content extends ContentBase
                 ['created_by'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => Account::className(),
-                'targetAttribute' => ['created_by' => Yii::$app->params['mongodb']['account'] ? '_id' : 'id']
+                'targetClass' => $this->getModule()->userModel,
+                'targetAttribute' => ['created_by' => $this->getModule()->userPK]
             ],
             [
                 ['id_ticket'],
                 'exist',
                 'skipOnError' => true,
                 'targetClass' => Ticket::className(),
-                'targetAttribute' => ['id_ticket' => Yii::$app->getModule('support')->params['db'] === 'mongodb' ? '_id' : 'id']
+                'targetAttribute' => ['id_ticket' => $this->getModule()->isMongoDb() ? '_id' : 'id']
             ],
         ];
     }
@@ -109,11 +108,7 @@ class Content extends ContentBase
      */
     public function getCreatedBy()
     {
-        if (Yii::$app->params['mongodb']['account']) {
-            return $this->hasOne(Account::className(), ['_id' => 'created_by']);
-        } else {
-            return $this->hasOne(Account::className(), ['id' => 'created_by']);
-        }
+        return $this->hasOne($this->getModule()->userModel, [$this->getModule()->userPK => 'created_by']);
     }
 
     /**
@@ -142,7 +137,7 @@ class Content extends ContentBase
                 $email = $this->ticket->createdBy->email;
                 Yii::$app->language = $this->ticket->createdBy->language;
             } else {
-                $email = Setting::getValue('adminMail');
+                $email = Yii::$app->params['adminEmail'];
             }
 
             /* send email */
@@ -156,7 +151,7 @@ class Content extends ContentBase
                     ],
                     ['title' => $subject, 'model' => $this]
                 )
-                ->setFrom([Setting::getValue('outgoingMail') => Yii::$app->name])
+                ->setFrom([Yii::$app->params['adminEmail'] => Yii::$app->name])
                 ->setTo($email)
                 ->setSubject($subject)
                 ->send();

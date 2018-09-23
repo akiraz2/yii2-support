@@ -43,10 +43,6 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'filter' => Cat::getCatList()
                         ],
                         'title',
-                        //'status',
-                        //'created_by',
-                        // 'created_at',
-                        // 'updated_at',
 
                         //['attribute' => 'created_by', 'value' => function ($model){return $model->createdBy->fullname;}],
                         [
@@ -86,7 +82,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
         </div>
         <!-- Loading (remove the following to stop the loading)-->
         <div class="overlay grid-view-overlay hidden">
-            <?= \powerkernel\fontawesome\Icon::widget(['icon' => 'refresh fa-spin']) ?>
+            <i class="fa fa-refresh fa-spin"></i>
         </div>
         <!-- end loading -->
     </div>

@@ -24,17 +24,12 @@ to the require section of your `composer.json` file.
 
 Add path to `console/config/main.php`
 ```
-'controllerMap' => [
-        'fixture' => [
-            'class' => 'yii\console\controllers\FixtureController',
-            'namespace' => 'common\fixtures',
-        ],
+'controllerMap' => [        
         'migrate' => [
             'class' => 'yii\console\controllers\MigrateController',
             'migrationPath' => null,
             'migrationNamespaces' => [
-                //'console\migrations',
-                //'yii\queue\db\migrations',
+                //'console\migrations',                
                 'powerkernel\support\migrations'
             ],
         ],
@@ -43,7 +38,7 @@ Add path to `console/config/main.php`
 
 Then run console command    
 ```
-php yii migrate --interactive=0 --migrationPath=@vendor/powerkernel/yii2-support/migrations/ --migrationTable={{%support_migration}}
+php yii migrate
 ```
 
 
@@ -52,4 +47,7 @@ php yii migrate --interactive=0 --migrationPath=@vendor/powerkernel/yii2-support
 
 ## Translations
 
+```
 yii message/extract @vendor/powerkernel/yii2-support/messages/config.php
+```
+
