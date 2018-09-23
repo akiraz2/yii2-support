@@ -7,10 +7,13 @@
 
 namespace powerkernel\support\controllers;
 
+use powerkernel\support\components\BackendFilter;
 use powerkernel\support\models\Category;
 use powerkernel\support\models\CategorySearch;
 use powerkernel\support\Module;
+use powerkernel\support\traits\ModuleTrait;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -20,6 +23,8 @@ use yii\web\NotFoundHttpException;
  */
 class CategoryController extends Controller
 {
+    use ModuleTrait;
+
     /**
      * @inheritdoc
      */
@@ -30,6 +35,24 @@ class CategoryController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['POST'],
+                ],
+            ],
+            'backend' => [
+                'class' => BackendFilter::className(),
+                'actions' => [
+                    '*',
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            return $this->getModule()->adminMatchCallback;
+                        },
+                    ]
                 ],
             ],
         ];

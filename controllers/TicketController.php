@@ -7,11 +7,13 @@
 
 namespace powerkernel\support\controllers;
 
+use powerkernel\support\components\BackendFilter;
 use powerkernel\support\models\Content;
 use powerkernel\support\models\Ticket;
 use powerkernel\support\models\TicketSearch;
 use powerkernel\support\traits\ModuleTrait;
 use Yii;
+use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -35,28 +37,29 @@ class TicketController extends Controller
                     'delete' => ['POST'],
                 ],
             ],
-
-            /*'backend' => [
+            'backend' => [
                 'class' => BackendFilter::className(),
                 'actions' => [
-                    'index',
+                    'manage',
                 ],
-            ],*/
-
-            /*'access' => [
+            ],
+            'access' => [
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'roles' => ['admin'],
                         'allow' => true,
+                        'roles' => ['@'],
+                        'matchCallback' => function () {
+                            return $this->getModule()->adminMatchCallback;
+                        },
                     ],
                     [
-                        'actions' => ['manage', 'create', 'view', 'close'],
+                        'actions' => ['index', 'create', 'view', 'close'],
                         'roles' => ['@'],
                         'allow' => true,
                     ],
                 ],
-            ],*/
+            ],
         ];
     }
 
@@ -66,9 +69,9 @@ class TicketController extends Controller
      */
     public function actionIndex()
     {
+        $this->view->title = \powerkernel\support\Module::t('support', 'My Tickets');
+        $searchModel = new TicketSearch(['userSearch' => true]);
 
-        $this->view->title = \powerkernel\support\Module::t('support', 'Tickets');
-        $searchModel = new TicketSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -83,9 +86,8 @@ class TicketController extends Controller
      */
     public function actionManage()
     {
-        //$this->layout = Yii::$app->view->theme->basePath . '/account.php';
-        $this->view->title = \powerkernel\support\Module::t('support', 'My Tickets');
-        $searchModel = new TicketSearch(['userSearch' => true]);
+        $this->view->title = \powerkernel\support\Module::t('support', 'Tickets');
+        $searchModel = new TicketSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('manage', [
@@ -102,84 +104,12 @@ class TicketController extends Controller
      */
     public function actionView($id)
     {
-        /*if (Yii::$app->id == 'app-frontend') {
-            $this->layout = Yii::$app->view->theme->basePath . '/account.php';
-        }
-        if (Yii::$app->id == 'app-backend') {
-            $this->layout = Yii::$app->view->theme->basePath . '/admin.php';
-        }*/
-
         $model = $this->findModel($id);
-        /*if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
+        if (!($model->created_by == Yii::$app->user->id) && !$this->getModule()->adminMatchCallback) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }*/
+        }
 
-        /* metaData */
-        //$title=$model->title;
         $this->view->title = $model->title;
-        //$keywords = $model->tags;
-        //$description = $model->desc;
-        //$metaTags[]=['name'=>'keywords', 'content'=>$keywords];
-        //$metaTags[]=['name'=>'description', 'content'=>$description];
-        /* Facebook */
-        //$metaTags[]=['property' => 'og:title', 'content' => $title];
-        //$metaTags[]=['property' => 'og:description', 'content' => $description];
-        //$metaTags[]=['property' => 'og:type', 'content' => '']; // article, product, profile etc
-        //$metaTags[]=['property' => 'og:image', 'content' => '']; //best 1200 x 630
-        //$metaTags[]=['property' => 'og:url', 'content' => ''];
-        //$metaTags[]=['property' => 'fb:app_id', 'content' => ''];
-        //$metaTags[]=['property' => 'fb:admins', 'content' => ''];
-        /* Twitter */
-        //$metaTags[]=['name'=>'twitter:card', 'content'=>'summary_large_image']; // summary, summary_large_image, photo, gallery, product, app, player
-        //$metaTags[]=['name'=>'twitter:site', 'content'=>Setting::getValue('twitterSite')];
-        // Can skip b/c we already have og
-        //$metaTags[]=['name'=>'twitter:title', 'content'=>$title];
-        //$metaTags[]=['name'=>'twitter:description', 'content'=>$description];
-        //$metaTags[]=['name'=>'twitter:image', 'content'=>''];
-        //$metaTags[]=['name'=>'twitter:data1', 'content'=>''];
-        //$metaTags[]=['name'=>'twitter:label1', 'content'=>''];
-        //$metaTags[]=['name'=>'twitter:data2', 'content'=>''];
-        //$metaTags[]=['name'=>'twitter:label2', 'content'=>''];
-        /* jsonld */
-        //$imageObject=$model->getImageObject();
-        //$jsonLd = (object)[
-        //    '@type'=>'Article',
-        //    'http://schema.org/name' => $model->title,
-        //    'http://schema.org/headline'=>$model->desc,
-        //    'http://schema.org/articleBody'=>$model->content,
-        //    'http://schema.org/dateCreated' => Yii::$app->formatter->asDate($model->created_at, 'php:c'),
-        //    'http://schema.org/dateModified' => Yii::$app->formatter->asDate($model->updated_at, 'php:c'),
-        //    'http://schema.org/datePublished' => Yii::$app->formatter->asDate($model->published_at, 'php:c'),
-        //    'http://schema.org/url'=>Yii::$app->urlManager->createAbsoluteUrl($model->viewUrl),
-        //    'http://schema.org/image'=>(object)[
-        //        '@type'=>'ImageObject',
-        //        'http://schema.org/url'=>$imageObject['url'],
-        //        'http://schema.org/width'=>$imageObject['width'],
-        //        'http://schema.org/height'=>$imageObject['height']
-        //    ],
-        //    'http://schema.org/author'=>(object)[
-        //        '@type'=>'Person',
-        //        'http://schema.org/name' => $model->author->{\Yii::$app->getModule('support')->userName},
-        //    ],
-        //    'http://schema.org/publisher'=>(object)[
-        //    '@type'=>'Organization',
-        //    'http://schema.org/name'=>Yii::$app->name,
-        //   'http://schema.org/logo'=>(object)[
-        //        '@type'=>'ImageObject',
-        //       'http://schema.org/url'=>Yii::$app->urlManager->createAbsoluteUrl(Yii::$app->homeUrl.'/images/logo.png')
-        //    ]
-        //    ],
-        //    'http://schema.org/mainEntityOfPage'=>(object)[
-        //        '@type'=>'WebPage',
-        //        '@id'=>Yii::$app->urlManager->createAbsoluteUrl($model->viewUrl)
-        //    ]
-        //];
-
-        /* OK */
-        //$data['title']=$title;
-        //$data['metaTags']=$metaTags;
-        //$data['jsonLd']=$jsonLd;
-        //$this->registerMetaTagJsonLD($data);
 
         // reply
         $reply = new Content();
@@ -254,9 +184,9 @@ class TicketController extends Controller
     public function actionClose($id)
     {
         $model = $this->findModel($id);
-        /*if (!Yii::$app->user->can('viewOwnItem', ['model' => $model]) && !Yii::$app->user->can('admin')) {
+        if (!($model->created_by == Yii::$app->user->id) && !$this->getModule()->adminMatchCallback) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
-        }*/
+        }
 
         if ($model->status != Ticket::STATUS_CLOSED) {
             $post = new Content();

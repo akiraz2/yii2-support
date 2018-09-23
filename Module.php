@@ -26,17 +26,33 @@ class Module extends \yii\base\Module
     /** @var string username uses in view (may be field `username` or `email` or `login`) */
     public $userName = 'username';
 
+    /** @var string email field in user table */
     public $userEmail = 'email';
 
+    /** @var string url for viewing user model, use in views/ticket/manage */
     public $urlViewUser;
 
     /** @var array Mailer configuration */
     public $mailer = [];
 
-    /** @var string The Administrator permission name. */
+    /** @var string The Administrator permission name. for future possible usage. */
     public $adminPermission;
 
+    /** @var string need to create correct Url from backend when notify by email */
     public $urlManagerFrontend = 'urlManager';
+
+    public $notifyByEmail = true;
+
+    /** @var string config.php: `'id' => 'app-backend',` */
+    public $appBackendId = 'app-backend';
+
+    /** @var bool|function for accessRule matchCallback
+     * for example,
+     *      'adminMatchCallback' => function () {
+     *          return \Yii::$app->user->identity->getIsAdmin();
+     *      }
+     */
+    public $adminMatchCallback = true;
 
     /**
      * Translate message

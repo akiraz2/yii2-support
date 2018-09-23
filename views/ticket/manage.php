@@ -3,7 +3,6 @@
 use powerkernel\support\models\Category;
 use powerkernel\support\models\Ticket;
 use yii\grid\GridView;
-use yii\helpers\Html;
 use yii\jui\DatePicker;
 use yii\widgets\Pjax;
 
@@ -17,10 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 /* misc */
 $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay").removeClass("hidden");});$(document).on("pjax:complete", function(){ $(".grid-view-overlay").addClass("hidden");})');
-//$js=file_get_contents(__DIR__.'/index.min.js');
-//$this->registerJs($js);
-//$css=file_get_contents(__DIR__.'/index.css');
-//$this->registerCss($css);
+
 ?>
 <div class="ticket-index">
     <div class="box box-primary">
@@ -32,9 +28,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                     'dataProvider' => $dataProvider,
                     'filterModel' => $searchModel,
                     'columns' => [
-                        ['class' => 'yii\grid\SerialColumn'],
-
-                        //'id',
+                        'id',
                         [
                             'attribute' => 'cat',
                             'value' => function ($model) {
@@ -43,8 +37,26 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'filter' => Category::getCatList()
                         ],
                         'title',
-
-                        //['attribute' => 'created_by', 'value' => function ($model){return $model->createdBy->{\Yii::$app->getModule('support')->userName};}],
+                        //'created_by',
+                        // 'created_at',
+                        // 'updated_at',
+                        [
+                            'attribute' => 'created_by',
+                            'value' => function ($model) {
+                                $module = Yii::$app->getModule('support');
+                                if ($module->urlViewUser) {
+                                    return \yii\helpers\Html::a($model->createdBy->{$module->userName},
+                                        Yii::$app->urlManager->createUrl([
+                                            $module->urlViewUser,
+                                            $module->userPK => $model->created_by
+                                        ]),
+                                        ['data-pjax' => 0]);
+                                } else {
+                                    return $model->createdBy->{$module->userName};
+                                }
+                            },
+                            'format' => 'raw'
+                        ],
                         [
                             'attribute' => 'status',
                             'value' => function ($model) {
@@ -65,19 +77,11 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             ]),
                             'contentOptions' => ['style' => 'min-width: 80px']
                         ],
-                        [
-                            'class' => 'yii\grid\ActionColumn',
-                            'template' => '{view}'
-                        ],
-
+                        ['class' => 'yii\grid\ActionColumn', 'template' => '{view} {delete}'],
                     ],
                 ]); ?>
             </div>
             <?php Pjax::end(); ?>
-            <p>
-                <?= Html::a(\powerkernel\support\Module::t('support', 'Open Ticket'), ['create'],
-                    ['class' => 'btn btn-success']) ?>
-            </p>
 
         </div>
         <!-- Loading (remove the following to stop the loading)-->

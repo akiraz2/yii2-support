@@ -141,19 +141,20 @@ class Content extends ContentBase
             } else {
                 $email = Yii::$app->params['adminEmail'];
             }
-
-            /* send email */
-            $subject = \powerkernel\support\Module::t('support', '[{APP} Ticket #{ID}] Re: {TITLE}',
-                ['APP' => Yii::$app->name, 'ID' => $this->ticket->id, 'TITLE' => $this->ticket->title]);
-            $this->mailer->sendMessage(
-                $email,
-                $subject,
-                [
-                    'html' => 'reply-ticket-html',
-                    'text' => 'reply-ticket-text'
-                ],
-                ['title' => $subject, 'model' => $this]
-            );
+            if ($this->getModule()->notifyByEmail) {
+                /* send email */
+                $subject = \powerkernel\support\Module::t('support', '[{APP} Ticket #{ID}] Re: {TITLE}',
+                    ['APP' => Yii::$app->name, 'ID' => $this->ticket->id, 'TITLE' => $this->ticket->title]);
+                $this->mailer->sendMessage(
+                    $email,
+                    $subject,
+                    [
+                        'html' => 'reply-ticket-html',
+                        'text' => 'reply-ticket-text'
+                    ],
+                    ['title' => $subject, 'model' => $this]
+                );
+            }
         }
     }
 

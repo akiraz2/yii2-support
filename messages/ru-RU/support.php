@@ -17,9 +17,14 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    'Are you sure you want to delete this item?' => 'Вы уверены, что хотите удалить?',
+    '[{APP} Ticket #{ID}] Re: {TITLE}' => '[{APP} Ticket #{ID}] Re: {TITLE}',
+    '{APP}: Ticket #{ID} updated' => '{APP}: Ticket #{ID} обновился',
+    'STATUS_ACTIVE' => '@@СТАТУС АКТИВ@@',
+    'STATUS_DELETED' => '@@СТАТУС УДАЛЕНО@@',
+    'STATUS_INACTIVE' => '@@СТАТУС НЕАКТИВ@@',
     'Active' => 'Активный',
     'Add Category' => 'Добавить категорию',
-    'Are you sure you want to delete this item?' => '',
     'Categories' => 'Категории',
     'Category' => 'Категория',
     'Category: {NAME}' => 'Категория: {NAME}',
@@ -40,9 +45,6 @@ return [
     'Open Ticket' => 'Открыть тикет',
     'Reply' => 'Ответить',
     'Reset' => 'Сброс',
-    'STATUS_ACTIVE' => 'СТАТУС АКТИВ',
-    'STATUS_DELETED' => 'СТАТУС УДАЛЕНО',
-    'STATUS_INACTIVE' => 'СТАТУС НЕАКТИВ',
     'Search' => 'Поиск',
     'Status' => 'Статус',
     'Status: {STATUS}' => 'Статус: {STATUS}',
@@ -62,8 +64,6 @@ return [
     'Waiting' => 'Ожидание',
     'You\'ve received a ticket' => 'Вы получили тикет',
     'You\'ve received a ticket (#{ID}) from {APP}' => 'Вы получили тикет (#{ID}) от {APP}',
-    '[{APP} Ticket #{ID}] Re: {TITLE}' => '',
-    '{APP}: Ticket #{ID} updated' => '',
     '{USER} ({EMAIL}) have opened a ticket with the following message:' => '{USER} ({EMAIL}) открыл тикет с таким сообщением:',
     '{USER} closed the ticket.' => '{USER} закрыл тикет.',
 ];
