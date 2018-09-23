@@ -41,17 +41,17 @@ $this->params['breadcrumbs'][] = $this->title;
             <ul class="timeline timeline-inverse">
                 <?php foreach ($model->contents as $post) : ?>
                     <li>
-                        <?php if (empty($post->created_by)): ?>
+                        <?php if (empty($post->user_id)): ?>
                             <i class="fa fa-info-circle bg-aqua"></i>
                         <?php else: ?>
                             <?= Html::tag('i', '',
-                                ['class' => $post->created_by == $model->created_by ? 'fa fa-comments bg-blue' : 'fa fa-comments bg-orange']) ?>
+                                ['class' => $post->user_id == $model->user_id ? 'fa fa-comments bg-blue' : 'fa fa-comments bg-orange']) ?>
                         <?php endif; ?>
 
                         <div class="timeline-item">
                             <span class="time"><i
                                         class="fa fa-clock-o"></i> <?= Yii::$app->formatter->asDatetime($post->createdAt) ?></span>
-                            <h3 class="timeline-header"><?= !empty($post->created_by) ? $post->createdBy->{Yii::$app->getModule('support')->userName} : \powerkernel\support\Module::t('support',
+                            <h3 class="timeline-header"><?= !empty($post->user_id) ? $post->user->{Yii::$app->getModule('support')->userName} : \powerkernel\support\Module::t('support',
                                     'Ticket System') ?></h3>
                             <div class="timeline-body">
                                 <?= Yii::$app->formatter->asNtext($post->content) ?>

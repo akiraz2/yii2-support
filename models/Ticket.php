@@ -7,6 +7,7 @@
 
 namespace powerkernel\support\models;
 
+use Hashids\Hashids;
 use powerkernel\support\Mailer;
 use powerkernel\support\traits\ModuleTrait;
 use Yii;
@@ -15,20 +16,33 @@ use Yii;
  * This is the model class for Ticket.
  *
  * @property integer|\MongoDB\BSON\ObjectID|string $id
- * @property integer|\MongoDB\BSON\ObjectID|string $cat
+ * @property integer|\MongoDB\BSON\ObjectID|string $category_id
+ * @property string $user_contact
+ * @property string $user_name
  * @property string $title
+ * @property string $hash_id
  * @property integer $status
- * @property integer|\MongoDB\BSON\ObjectID|string $created_by
+ * @property integer $type_id
+ * @property integer $priority
+ * @property integer|\MongoDB\BSON\ObjectID|string $user_id
  * @property integer|\MongoDB\BSON\UTCDateTime $created_at
  * @property integer|\MongoDB\BSON\UTCDateTime $updated_at
  *
  * @property Content[] $contents
  * @property Category $category
- * @property Account $createdBy
+ * @property User $user
  */
 class Ticket extends TicketBase
 {
     use ModuleTrait;
+
+    const TYPE_SITE = 0;
+    const TYPE_EMAIL = 10;
+    const TYPE_TELEGRAM = 20;
+
+    const PRIORITY_LOW = 0;
+    const PRIORITY_MIDDLE = 10;
+    const PRIORITY_HIGH = 20;
 
     const STATUS_OPEN = 0;
     const STATUS_WAITING = 10;
@@ -80,10 +94,17 @@ class Ticket extends TicketBase
         $list = self::getStatusOption();
 
         switch ($status) {
-            case self::STATUS_CLOSED: $color = 'danger'; break;
-            case self::STATUS_OPEN: $color = 'primary'; break;
-            case self::STATUS_WAITING: $color = 'warning'; break;
-            default: $color = 'default';
+            case self::STATUS_CLOSED:
+                $color = 'danger';
+                break;
+            case self::STATUS_OPEN:
+                $color = 'primary';
+                break;
+            case self::STATUS_WAITING:
+                $color = 'warning';
+                break;
+            default:
+                $color = 'default';
         }
 
         if (!is_null($status) && in_array($status, array_keys($list))) {
@@ -102,25 +123,27 @@ class Ticket extends TicketBase
     {
         return [
             [['status'], 'default', 'value' => self::STATUS_OPEN],
+            [['priority'], 'default', 'value' => self::PRIORITY_MIDDLE],
+            [['type_id'], 'default', 'value' => self::TYPE_SITE],
 
-            [['title', 'cat',], 'required'],
+            [['title', 'category_id',], 'required'],
             [['title'], 'string', 'max' => 255],
 
-            [['status'], 'number'],
+            [['status', 'priority'], 'number'],
 
             [
-                ['cat'],
+                ['category_id'],
                 'exist',
                 'skipOnError' => true,
                 'targetClass' => Category::className(),
-                'targetAttribute' => ['cat' => Yii::$app->getModule('support')->isMongoDb() ? '_id' : 'id']
+                'targetAttribute' => ['category_id' => Yii::$app->getModule('support')->isMongoDb() ? '_id' : 'id']
             ],
             [
-                ['created_by'],
+                ['user_id'],
                 'exist',
                 'skipOnError' => true,
                 'targetClass' => $this->getModule()->userModel,
-                'targetAttribute' => ['created_by' => $this->getModule()->userPK]
+                'targetAttribute' => ['user_id' => $this->getModule()->userPK]
             ],
 
             /* custom */
@@ -135,11 +158,11 @@ class Ticket extends TicketBase
     {
         return [
             'id' => \powerkernel\support\Module::t('support', 'ID'),
-            'cat' => \powerkernel\support\Module::t('support', 'Category'),
+            'category_id' => \powerkernel\support\Module::t('support', 'Category'),
             'title' => \powerkernel\support\Module::t('support', 'Title'),
             'content' => \powerkernel\support\Module::t('support', 'Content'),
             'status' => \powerkernel\support\Module::t('support', 'Status'),
-            'created_by' => \powerkernel\support\Module::t('support', 'Created By'),
+            'user_id' => \powerkernel\support\Module::t('support', 'Created By'),
             'created_at' => \powerkernel\support\Module::t('support', 'Created At'),
             'updated_at' => \powerkernel\support\Module::t('support', 'Updated At'),
         ];
@@ -163,18 +186,22 @@ class Ticket extends TicketBase
     public function getCategory()
     {
         if (is_a($this, '\yii\mongodb\ActiveRecord')) {
-            return $this->hasOne(Category::className(), ['_id' => 'cat']);
+            return $this->hasOne(Category::className(), ['_id' => 'category_id']);
         } else {
-            return $this->hasOne(Category::className(), ['id' => 'cat']);
+            return $this->hasOne(Category::className(), ['id' => 'category_id']);
         }
     }
 
     /**
      * @return \yii\db\ActiveQueryInterface
      */
-    public function getCreatedBy()
+    public function getUser()
     {
-        return $this->hasOne($this->getModule()->userModel, [$this->getModule()->userPK => 'created_by']);
+        if ($this->type_id === self::TYPE_SITE) {
+            return $this->hasOne($this->getModule()->userModel, [$this->getModule()->userPK => 'user_id']);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -185,7 +212,15 @@ class Ticket extends TicketBase
     public function beforeSave($insert)
     {
         if ($insert) {
-            $this->created_by = Yii::$app->user->id;
+            if ($this->type_id === self::TYPE_SITE) {
+                $this->user_id = Yii::$app->user->id;
+                $this->user_name = Yii::$app->user->identity->{$this->getModule()->userName};
+            }
+            if ($this->type_id === self::TYPE_EMAIL) {
+                if (($userModel = $this->getModule()->userModel::findOne([$this->getModule()->userEmail => $this->user_contact])) && $userModel !== null) {
+                    $this->user_id = $this->getModule()->userModel::findOne([$this->getModule()->userEmail => $this->user_contact]);
+                }
+            }
         }
         return parent::beforeSave($insert); // TODO: Change the autogenerated stub
     }
@@ -198,20 +233,20 @@ class Ticket extends TicketBase
     public function afterSave($insert, $changedAttributes)
     {
         if ($insert) {
+            $hash_ids = new Hashids(Yii::$app->name, 10);
+            $hash_id = $hash_ids->encode($this->id); //
+            $this->updateAttributes(['hash_id' => $hash_id]);
+
             $ticketContent = new Content();
             $ticketContent->id_ticket = $this->id;
             $ticketContent->content = $this->content;
-            $ticketContent->created_by = Yii::$app->user->id;
+            $ticketContent->user_id = Yii::$app->user->id;
             if ($ticketContent->save()) {
                 if ($this->getModule()->notifyByEmail) {
                     /* send email */
                     $subject = \powerkernel\support\Module::t('support', 'You\'ve received a ticket');
-                    $this->mailer->sendMessageToSupportEmail(
-                        $subject,
-                        [
-                            'html' => 'new-ticket-html',
-                            'text' => 'new-ticket-text'
-                        ],
+                    $this->mailer->sendMessageToSupportEmail($subject,
+                        'new-ticket',
                         ['title' => $subject, 'model' => $this]
                     );
                 }
@@ -244,7 +279,7 @@ class Ticket extends TicketBase
         if ($this->status != Ticket::STATUS_CLOSED) {
             $post = new Content();
             $post->id_ticket = $this->id;
-            $post->created_by = null;
+            $post->user_id = null;
             $post->content = \powerkernel\support\Module::t('support',
                 'Ticket was closed automatically due to inactivity.');
             if ($post->save()) {

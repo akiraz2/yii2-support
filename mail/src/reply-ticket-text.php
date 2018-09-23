@@ -5,7 +5,7 @@
 
 <?= \powerkernel\support\Module::t('support', 'Ticket #{ID}: New reply from {NAME}:', [
     'ID' => $model->ticket->id,
-    'NAME' => !empty($model->created_by) ? $model->createdBy->{\Yii::$app->getModule('support')->userName} : \powerkernel\support\Module::t('support',
+    'NAME' => !empty($model->user_id) ? $model->user->{\Yii::$app->getModule('support')->userName} : \powerkernel\support\Module::t('support',
         'Ticket System')
 ]) ?>
 

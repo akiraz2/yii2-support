@@ -121,7 +121,7 @@ class Category extends CategoryBase
      */
     public function getTickets()
     {
-        return $this->hasMany(Ticket::className(), ['cat' => 'id']);
+        return $this->hasMany(Ticket::className(), ['category_id' => 'id']);
     }
 
     /**

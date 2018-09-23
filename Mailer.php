@@ -40,7 +40,7 @@ class Mailer extends Component
                 : 'no-reply@example.com';
         }
 
-        return $this->sendMessage($this->toEmail, $subject, $view, $params = []);
+        return $this->sendMessage($this->toEmail, $subject, $view, $params);
     }
 
     /**
@@ -62,8 +62,8 @@ class Mailer extends Component
                 Yii::$app->params['adminEmail']
                 : 'no-reply@example.com';
         }
-
-        return $mailer->compose($view, $params)
+        return $mailer->compose(['html' => $view . '-html', 'text' => $view . '-text' ],
+            $params)
             ->setTo($to)
             ->setFrom($this->sender)
             ->setSubject($subject)

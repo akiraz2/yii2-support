@@ -33,7 +33,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                     'filterModel' => $searchModel,
                     'columns' => [
                         [
-                            'attribute' => 'cat',
+                            'attribute' => 'category_id',
                             'value' => function ($model) {
                                 return $model->category->title;
                             },
@@ -41,7 +41,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                         ],
                         'title',
 
-                        //['attribute' => 'created_by', 'value' => function ($model){return $model->createdBy->{\Yii::$app->getModule('support')->userName};}],
+                        //['attribute' => 'user_id', 'value' => function ($model){return $model->user->{\Yii::$app->getModule('support')->userName};}],
                         [
                             'attribute' => 'status',
                             'value' => function ($model) {

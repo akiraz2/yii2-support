@@ -38,7 +38,7 @@ if (Yii::$app->getModule('support')->isMongoDb()) {
                 '_id',
                 'id_ticket',
                 'content',
-                'created_by',
+                'user_id',
                 'created_at',
                 'updated_at',
             ];

@@ -14,7 +14,7 @@ use yii\helpers\Html;
     </div>
     <meta itemprop="description"
           content="<?= \powerkernel\support\Module::t('support', 'You\'ve received a ticket (#{ID}) from {APP}',
-              ['ID' => $model->id, 'APP' => Yii::$app->name]) ?>">
+              ['ID' => $model->hash_id, 'APP' => Yii::$app->name]) ?>">
 </div>
 
 <table class="body-wrap" style="background-color: #f6f6f6; width: 100%;" width="100%" bgcolor="#f6f6f6">
@@ -43,8 +43,8 @@ use yii\helpers\Html;
                                         <?= \powerkernel\support\Module::t('support',
                                             '{USER} ({EMAIL}) have opened a ticket with the following message:',
                                             [
-                                                'USER' => Html::encode($model->createdBy->{\Yii::$app->getModule('support')->userName}),
-                                                'EMAIL' => Html::encode($model->createdBy->{\Yii::$app->getModule('support')->userEmail})
+                                                'USER' => Html::encode($model->user->{\Yii::$app->getModule('support')->userName}),
+                                                'EMAIL' => Html::encode($model->user->{\Yii::$app->getModule('support')->userEmail})
                                             ]) ?>
                                     </td>
                                 </tr>

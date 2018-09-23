@@ -36,10 +36,10 @@ if (Yii::$app->getModule('support')->isMongoDb()) {
         {
             return [
                 '_id',
-                'cat',
+                'category_id',
                 'title',
                 'status',
-                'created_by',
+                'user_id',
                 'created_at',
                 'updated_at',
             ];

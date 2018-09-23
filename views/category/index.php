@@ -20,7 +20,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
 //$css=file_get_contents(__DIR__.'/index.css');
 //$this->registerCss($css);
 ?>
-<div class="cat-index">
+<div class="category-index">
     <div class="box box-primary">
         <div class="box-body">
             <?php // echo $this->render('_search', ['model' => $searchModel]); ?>

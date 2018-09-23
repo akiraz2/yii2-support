@@ -105,7 +105,7 @@ class TicketController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        if (!($model->created_by == Yii::$app->user->id) && !$this->getModule()->adminMatchCallback) {
+        if (!($model->user_id == Yii::$app->user->id) && !$this->getModule()->adminMatchCallback) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
 
@@ -114,9 +114,9 @@ class TicketController extends Controller
         // reply
         $reply = new Content();
         $reply->id_ticket = $model->id;
-        $reply->created_by = Yii::$app->user->id;
+        $reply->user_id = Yii::$app->user->id;
         if ($reply->load(Yii::$app->request->post()) && $reply->save()) {
-            if (Yii::$app->user->id == $model->created_by) {
+            if (Yii::$app->user->id == $model->user_id) {
                 $model->status = Ticket::STATUS_OPEN;
                 $model->save();
             } else {
@@ -184,14 +184,14 @@ class TicketController extends Controller
     public function actionClose($id)
     {
         $model = $this->findModel($id);
-        if (!($model->created_by == Yii::$app->user->id) && !$this->getModule()->adminMatchCallback) {
+        if (!($model->user_id == Yii::$app->user->id) && !$this->getModule()->adminMatchCallback) {
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
 
         if ($model->status != Ticket::STATUS_CLOSED) {
             $post = new Content();
             $post->id_ticket = $model->id;
-            $post->created_by = Yii::$app->user->id;
+            $post->user_id = Yii::$app->user->id;
             $module = $this->getModule();
             $userModel = $module->userModel::findOne([$module->userPK => Yii::$app->user->id]);
             $post->content = \powerkernel\support\Module::t('support', '{USER} closed the ticket.',

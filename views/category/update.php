@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = \powerkernel\support\Module::t('support', 'Upda
 //$css=file_get_contents(__DIR__.'/index.css');
 //$this->registerCss($css);
 ?>
-<div class="cat-update">
+<div class="category-update">
     <div class="box box-primary">
         <div class="box-body">
             <?= $this->render('_form', [

@@ -30,7 +30,7 @@ class TicketSearch extends Ticket
     public function rules()
     {
         return [
-            [['cat', 'title', 'status', 'created_at', 'created_by'], 'safe'],
+            [['category_id', 'title', 'status', 'created_at', 'user_id'], 'safe'],
         ];
     }
 
@@ -65,7 +65,7 @@ class TicketSearch extends Ticket
         $this->load($params);
 
         if ($this->userSearch) {
-            $query->andFilterWhere(['created_by' => Yii::$app->user->id]);
+            $query->andFilterWhere(['user_id' => Yii::$app->user->id]);
         }
 
         if (!$this->validate()) {
@@ -77,16 +77,16 @@ class TicketSearch extends Ticket
         // grid filtering conditions
         $query->andFilterWhere([
             //'id' => $this->id,
-            'cat' => $this->cat,
+            'category_id' => $this->category_id,
             'status' => $this->status,
-            //'created_by' => $this->created_by,
+            //'user_id' => $this->user_id,
             //'created_at' => $this->created_at,
             //'updated_at' => $this->updated_at,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title]);
 
-        if (!empty($this->created_by)) {
+        if (!empty($this->user_id)) {
             if ($this->getModule()->isMongoDb()) {
                 $key = '_id';
             } else {
@@ -97,7 +97,7 @@ class TicketSearch extends Ticket
             $owners = $this->getModule()->userModel::find()->select([$key])->where([
                 'like',
                 $userNameField,
-                $this->created_by
+                $this->user_id
             ])->asArray()->all();
             foreach ($owners as $owner) {
                 if ($this->getModule()->isMongoDb()) {
@@ -106,7 +106,7 @@ class TicketSearch extends Ticket
                     $ids[] = (int)$owner[$key];
                 }
             }
-            $query->andFilterWhere(['created_by' => empty($ids) ? '0' : $ids]);
+            $query->andFilterWhere(['user_id' => empty($ids) ? '0' : $ids]);
         }
 
         if (!empty($this->created_at)) {

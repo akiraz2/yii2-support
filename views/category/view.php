@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //$css=file_get_contents(__DIR__.'/index.css');
 //$this->registerCss($css);
 ?>
-<div class="cat-view">
+<div class="category-view">
     <div class="box box-info">
         <div class="box-body">
             <div class="table-responsive">

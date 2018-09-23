@@ -22,7 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
 //$css=file_get_contents(__DIR__.'/index.css');
 //$this->registerCss($css);
 ?>
-<div class="cat-create">
+<div class="category-create">
     <div class="box box-success">
         <div class="box-body">
             <?= $this->render('_form', [

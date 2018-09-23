@@ -30,29 +30,29 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                     'columns' => [
                         'id',
                         [
-                            'attribute' => 'cat',
+                            'attribute' => 'category_id',
                             'value' => function ($model) {
                                 return $model->category->title;
                             },
                             'filter' => Category::getCatList()
                         ],
                         'title',
-                        //'created_by',
+                        //'user_id',
                         // 'created_at',
                         // 'updated_at',
                         [
-                            'attribute' => 'created_by',
+                            'attribute' => 'user_id',
                             'value' => function ($model) {
                                 $module = Yii::$app->getModule('support');
                                 if ($module->urlViewUser) {
-                                    return \yii\helpers\Html::a($model->createdBy->{$module->userName},
+                                    return \yii\helpers\Html::a($model->user->{$module->userName},
                                         Yii::$app->urlManager->createUrl([
                                             $module->urlViewUser,
-                                            $module->userPK => $model->created_by
+                                            $module->userPK => $model->user_id
                                         ]),
                                         ['data-pjax' => 0]);
                                 } else {
-                                    return $model->createdBy->{$module->userName};
+                                    return $model->user->{$module->userName};
                                 }
                             },
                             'format' => 'raw'
