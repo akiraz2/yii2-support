@@ -1,6 +1,6 @@
 <?php
 
-use powerkernel\support\models\Cat;
+use powerkernel\support\models\Category;
 use powerkernel\support\models\Ticket;
 use yii\grid\GridView;
 use yii\jui\DatePicker;
@@ -37,7 +37,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'value' => function ($model) {
                                 return $model->category->title;
                             },
-                            'filter' => Cat::getCatList()
+                            'filter' => Category::getCatList()
                         ],
                         'title',
                         //'created_by',

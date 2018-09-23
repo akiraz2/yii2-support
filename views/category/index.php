@@ -1,12 +1,12 @@
 <?php
 
-use powerkernel\support\models\Cat;
+use powerkernel\support\models\Category;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel powerkernel\support\models\CatSearch */
+/* @var $searchModel powerkernel\support\models\CategorySearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 
@@ -49,7 +49,7 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'value' => function ($model) {
                                 return $model->statusColorText;
                             },
-                            'filter' => Cat::getStatusOption(),
+                            'filter' => Category::getStatusOption(),
                             'format' => 'raw'
                         ],
                         ['class' => 'yii\grid\ActionColumn'],

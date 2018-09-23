@@ -1,6 +1,6 @@
 <?php
 
-use powerkernel\support\models\Cat;
+use powerkernel\support\models\Category;
 use powerkernel\support\models\Ticket;
 use yii\grid\GridView;
 use yii\helpers\Html;
@@ -40,11 +40,11 @@ $this->registerJs('$(document).on("pjax:send", function(){ $(".grid-view-overlay
                             'value' => function ($model) {
                                 return $model->category->title;
                             },
-                            'filter' => Cat::getCatList()
+                            'filter' => Category::getCatList()
                         ],
                         'title',
 
-                        //['attribute' => 'created_by', 'value' => function ($model){return $model->createdBy->fullname;}],
+                        //['attribute' => 'created_by', 'value' => function ($model){return $model->createdBy->{\Yii::$app->getModule('support')->userName};}],
                         [
                             'attribute' => 'status',
                             'value' => function ($model) {

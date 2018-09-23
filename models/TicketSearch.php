@@ -93,7 +93,12 @@ class TicketSearch extends Ticket
                 $key = 'id';
             }
             $ids = [];
-            $owners = Account::find()->select([$key])->where(['like', 'fullname', $this->created_by])->asArray()->all();
+            $userNameField = $this->getModule()->userName;
+            $owners = $this->getModule()->userModel::find()->select([$key])->where([
+                'like',
+                $userNameField,
+                $this->created_by
+            ])->asArray()->all();
             foreach ($owners as $owner) {
                 if ($this->getModule()->isMongoDb()) {
                     $ids[] = (string)$owner[$key];

@@ -12,7 +12,7 @@ use powerkernel\support\traits\ModuleTrait;
 use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "{{%ticket_cat}}".
+ * This is the model class for table "{{%category}}".
  *
  * @property integer|\MongoDB\BSON\ObjectID|string $id
  * @property string $title
@@ -22,7 +22,7 @@ use yii\helpers\ArrayHelper;
  *
  * @property Ticket[] $tickets
  */
-class Cat extends CatBase
+class Category extends CategoryBase
 {
     use ModuleTrait;
 

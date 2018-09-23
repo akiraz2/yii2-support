@@ -159,7 +159,7 @@ class TicketController extends Controller
         //    ],
         //    'http://schema.org/author'=>(object)[
         //        '@type'=>'Person',
-        //        'http://schema.org/name' => $model->author->fullname,
+        //        'http://schema.org/name' => $model->author->{\Yii::$app->getModule('support')->userName},
         //    ],
         //    'http://schema.org/publisher'=>(object)[
         //    '@type'=>'Organization',
@@ -229,7 +229,6 @@ class TicketController extends Controller
      */
     public function actionCreate()
     {
-        //$this->layout = Yii::$app->view->theme->basePath . '/account.php';
         $this->view->title = \powerkernel\support\Module::t('support', 'Open Ticket');
         $model = new Ticket();
         $model->setScenario('create');
@@ -240,7 +239,6 @@ class TicketController extends Controller
                 'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
             ]);
         } else {
-            var_dump($model->getErrors());
             return $this->render('create', [
                 'model' => $model,
             ]);

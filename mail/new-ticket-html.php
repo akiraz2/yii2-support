@@ -43,8 +43,8 @@ use yii\helpers\Html;
                                         <?= \powerkernel\support\Module::t('support',
                                             '{USER} ({EMAIL}) have opened a ticket with the following message:',
                                             [
-                                                'USER' => Html::encode($model->createdBy->fullname),
-                                                'EMAIL' => Html::encode($model->createdBy->email)
+                                                'USER' => Html::encode($model->createdBy->{\Yii::$app->getModule('support')->userName}),
+                                                'EMAIL' => Html::encode($model->createdBy->{\Yii::$app->getModule('support')->userEmail})
                                             ]) ?>
                                     </td>
                                 </tr>

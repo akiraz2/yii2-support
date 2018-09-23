@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2017 Power Kernel
  */
 
-use powerkernel\support\models\Cat;
+use powerkernel\support\models\Category;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
@@ -17,7 +17,7 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'cat')->dropDownList(Cat::getCatList()) ?>
+    <?= $form->field($model, 'cat')->dropDownList(Category::getCatList()) ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 

@@ -12,9 +12,9 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * CatSearch represents the model behind the search form about `powerkernel\ticket\models\Cat`.
+ * CategorySearch represents the model behind the search form about `powerkernel\ticket\models\Category`.
  */
-class CatSearch extends Cat
+class CategorySearch extends Category
 {
     /**
      * @inheritdoc
@@ -45,7 +45,7 @@ class CatSearch extends Cat
      */
     public function search($params)
     {
-        $query = Cat::find();
+        $query = Category::find();
 
         // add conditions that should always apply here
 

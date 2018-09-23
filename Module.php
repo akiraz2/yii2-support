@@ -10,7 +10,7 @@ use Yii;
 class Module extends \yii\base\Module
 {
     /** @var string DB type `sql` or `mongodb` */
-    public $dbType ='sql';
+    public $dbType = 'sql';
 
     /**
      * @inheritdoc
@@ -18,7 +18,7 @@ class Module extends \yii\base\Module
     public $controllerNamespace = 'powerkernel\support\controllers';
 
     /** @var linked user (for example, 'common\models\User::class' */
-    public $userModel;// = \common\models\User::class;
+    public $userModel;
 
     /** @var string Primary Key for user table, by default 'id' */
     public $userPK = 'id';
@@ -26,10 +26,17 @@ class Module extends \yii\base\Module
     /** @var string username uses in view (may be field `username` or `email` or `login`) */
     public $userName = 'username';
 
+    public $userEmail = 'email';
+
     public $urlViewUser;
 
     /** @var array Mailer configuration */
     public $mailer = [];
+
+    /** @var string The Administrator permission name. */
+    public $adminPermission;
+
+    public $urlManagerFrontend = 'urlManager';
 
     /**
      * Translate message
@@ -53,14 +60,6 @@ class Module extends \yii\base\Module
     public static function translate($message, $params = [], $language = null)
     {
         return self::t('support', $message, $params, $language);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function init()
-    {
-        parent::init();
     }
 
     /**
@@ -92,6 +91,14 @@ class Module extends \yii\base\Module
     public static function t($category, $message, $params = [], $language = null)
     {
         return Yii::t('powerkernel/' . $category, $message, $params, $language);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
     }
 
     public function isMongoDb()

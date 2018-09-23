@@ -19,7 +19,7 @@ class Bootstrap implements BootstrapInterface
     public function bootstrap($app)
     {
         if ($app->hasModule('support') && ($module = $app->getModule('support')) instanceof Module) {
-            Yii::$container->set('powerkernel\support\Mailer', $module->mailer);
+            \Yii::$container->set('powerkernel\support\Mailer', $module->mailer);
         }
 
         // Add module I18N category.

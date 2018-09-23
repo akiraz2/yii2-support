@@ -6,15 +6,15 @@
  */
 
 /* @var $this yii\web\View */
-/* @var $model powerkernel\support\models\Cat */
+/* @var $model powerkernel\support\models\Category */
 
 
+/* breadcrumbs */
 $this->params['breadcrumbs'][] = [
     'label' => \powerkernel\support\Module::t('support', 'Categories'),
     'url' => ['index']
 ];
-$this->params['breadcrumbs'][] = ['label' => $model->title, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = \powerkernel\support\Module::t('support', 'Update');
+$this->params['breadcrumbs'][] = $this->title;
 
 /* misc */
 //$js=file_get_contents(__DIR__.'/index.min.js');
@@ -22,8 +22,8 @@ $this->params['breadcrumbs'][] = \powerkernel\support\Module::t('support', 'Upda
 //$css=file_get_contents(__DIR__.'/index.css');
 //$this->registerCss($css);
 ?>
-<div class="cat-update">
-    <div class="box box-primary">
+<div class="cat-create">
+    <div class="box box-success">
         <div class="box-body">
             <?= $this->render('_form', [
                 'model' => $model,

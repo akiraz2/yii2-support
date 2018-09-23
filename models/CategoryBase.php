@@ -26,7 +26,7 @@ if (Yii::$app->getModule('support')->isMongoDb()) {
          */
         public static function collectionName()
         {
-            return 'support_cats';
+            return 'support_categorys';
         }
 
         /**
@@ -90,7 +90,7 @@ if (Yii::$app->getModule('support')->isMongoDb()) {
          */
         public static function tableName()
         {
-            return '{{%support_cat}}';
+            return '{{%support_category}}';
         }
 
         /**
@@ -122,9 +122,8 @@ if (Yii::$app->getModule('support')->isMongoDb()) {
 }
 
 /**
- * Class CatBase
- * @package common\models
+ * Class CategoryBase *
  */
-class CatBase extends CatActiveRecord
+class CategoryBase extends CatActiveRecord
 {
 }

@@ -20,8 +20,8 @@ class MigrateController extends \yii\console\Controller
     {
         echo "Migrating Cat...\n";
         /* logs */
-        $rows = (new Query())->select('*')->from('{{%support_cat}}')->all();
-        $collection = \Yii::$app->mongodb->getCollection('support_cats');
+        $rows = (new Query())->select('*')->from('{{%support_category}}')->all();
+        $collection = \Yii::$app->mongodb->getCollection('support_categorys');
         foreach ($rows as $row) {
             $collection->insert([
                 'title' => $row['title'],

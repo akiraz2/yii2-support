@@ -5,11 +5,11 @@
  * @copyright Copyright (c) 2017 Power Kernel
  */
 
-use powerkernel\support\models\Cat;
+use powerkernel\support\models\Category;
 use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
-/* @var $model powerkernel\support\models\Cat */
+/* @var $model powerkernel\support\models\Category */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -19,7 +19,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->dropDownList(Cat::getStatusOption()) ?>
+    <?= $form->field($model, 'status')->dropDownList(Category::getStatusOption()) ?>
 
     <div class="form-group">
         <?= \yii\helpers\Html::submitButton($model->isNewRecord ? \powerkernel\support\Module::t('support', 'Create') :

@@ -9,7 +9,7 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model powerkernel\support\models\Cat */
+/* @var $model powerkernel\support\models\Category */
 
 $this->params['breadcrumbs'][] = [
     'label' => \powerkernel\support\Module::t('support', 'Categories'),
