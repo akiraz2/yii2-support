@@ -61,6 +61,8 @@ class Module extends \yii\base\Module
     /** @var string|Queue component for queue  */
     public $queueComponent = 'queue';
 
+    public $countDaysToClose = 7;
+
     /**
      * Translate message
      * @param $message

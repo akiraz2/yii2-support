@@ -4,6 +4,7 @@ namespace powerkernel\support;
 
 use powerkernel\support\traits\ModuleTrait;
 use yii\base\BootstrapInterface;
+use yii\console\Application as ConsoleApplication;
 use yii\i18n\PhpMessageSource;
 
 /**
@@ -31,6 +32,10 @@ class Bootstrap implements BootstrapInterface
                     'uploadUrl' => $this->getModule()->getImgFullPathUrl() . '/upload',
                     'imageAllowExtensions' => ['jpg', 'png', 'gif', 'svg']*/
                 ]);
+            }
+
+            if ($app instanceof ConsoleApplication) {
+                $this->getModule()->controllerNamespace = 'powerkernel\support\commands';
             }
 
             $app->urlManager->addRules(
