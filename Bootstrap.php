@@ -45,6 +45,13 @@ class Bootstrap implements BootstrapInterface
                     '<_m:support>' => '<_m>/ticket/index',
                 ]
             );
+
+            if (!$app->has($this->getModule()->queueComponent)) {
+                $app->set($this->getModule()->queueComponent, [
+                    'class' => \yii\queue\sync\Queue::class,
+                    'handle' => true, // whether tasks should be executed immediately
+                ]);
+            }
         }
 
         // Add module I18N category.

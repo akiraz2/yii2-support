@@ -75,7 +75,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?php if ($model->status != Ticket::STATUS_CLOSED): ?>
                         <?= Html::a(\powerkernel\support\Module::t('support', 'Close'), [
                             'close',
-                            'id' => is_a($model, '\yii\mongodb\ActiveRecord') ? (string)$model->_id : $model->id
+                            'id' =>  $model->hash_id
                         ], ['class' => 'btn btn-warning']) ?>
                     <?php endif; ?>
                 </div>

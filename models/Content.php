@@ -7,6 +7,7 @@
 
 namespace powerkernel\support\models;
 
+use powerkernel\support\jobs\SendMailJob;
 use powerkernel\support\Mailer;
 use powerkernel\support\traits\ModuleTrait;
 use Yii;
@@ -17,7 +18,9 @@ use Yii;
  * @property integer|\MongoDB\BSON\ObjectID|string $id
  * @property integer|\MongoDB\BSON\ObjectID|string $id_ticket
  * @property string $content
+ * @property string $mail_id
  * @property string $info
+ * @property string $fetch_date
  * @property integer|\MongoDB\BSON\ObjectID|string $user_id
  * @property integer|\MongoDB\BSON\UTCDateTime $created_at
  * @property integer|\MongoDB\BSON\UTCDateTime $updated_at
@@ -137,16 +140,9 @@ class Content extends ContentBase
         if ($insert) {
             if ($this->getModule()->notifyByEmail) {
                 if ($this->user_id != $this->ticket->user_id) {
-                    $email = $this->ticket->user_contact;
-                    /* send email */
-                    $subject = \powerkernel\support\Module::t('support', '[{APP} Ticket #{ID}] Re: {TITLE}',
-                        ['APP' => Yii::$app->name, 'ID' => $this->ticket->hash_id, 'TITLE' => $this->ticket->title]);
-                    $this->mailer->sendMessage(
-                        $email,
-                        $subject,
-                        'reply-ticket',
-                        ['title' => $subject, 'model' => $this]
-                    );
+                    $id = Yii::$app->get($this->getModule()->queueComponent)->push(new SendMailJob([
+                        'contentId' => $this->id
+                    ]));
                 }
             }
         }

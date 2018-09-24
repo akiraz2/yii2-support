@@ -3,6 +3,7 @@
 namespace powerkernel\support;
 
 use Yii;
+use yii\queue\Queue;
 
 /**
  * support module definition class
@@ -54,7 +55,11 @@ class Module extends \yii\base\Module
      */
     public $adminMatchCallback = true;
 
+    /** @var string wysiwyg component for creating content of ticket */
     public $redactorModule = 'redactor';
+
+    /** @var string|Queue component for queue  */
+    public $queueComponent = 'queue';
 
     /**
      * Translate message

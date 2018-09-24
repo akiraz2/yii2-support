@@ -129,7 +129,6 @@ class TicketController extends Controller
             ]);
         }
 
-
         return $this->render('view', [
             'model' => $model,
             'reply' => $reply
